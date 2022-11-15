@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="COMP3335_Project" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" is_https="true" browser="e5120d43-2c3f-47ef-9f26-65e539e05186" server_name="ngnix" start_url="/index">
+    <method v="2" />
+  </configuration>
+</component>
