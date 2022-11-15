@@ -1,5 +1,8 @@
 # COMP3335_GROUP21
 
+## Entity-Relationship Diagram
+![ERD](./images/ERD.png)
+
 ## Privileges on different types of users
 | User Type  | Room          | Reservation        | Customer             | Staff         | Room Type | Grant | Create User |
 |------------|---------------|--------------------|----------------------|---------------|-----------|-------|-------------|
@@ -8,3 +11,4 @@
 | Cleaner    | R - row level | R - row level      | \                    | \             | R         | \     | \           |
 | Customer   | \             | CRU -col&row level | CRUD - row&col level | \             | R         | \     | \           |
 | Server     | \             |                    |                      | \             | R         | Y     | Y           |
+
