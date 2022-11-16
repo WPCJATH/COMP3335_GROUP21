@@ -1,0 +1,15 @@
+FROM phpmyadmin/phpmyadmin
+RUN a2enmod ssl && a2enmod rewrite
+RUN mkdir -p /etc/apache2/ssl
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+COPY ./certificate/cert.pem /etc/apache2/ssl/
+COPY ./certificate/cert-key.pem /etc/apache2/ssl/
+COPY ./www-admin.conf /etc/apache2/sites-available/000-default.conf
+
+RUN echo '\nServerName 127.0.0.1' >> /etc/apache2/apache2.conf
+RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
+RUN . /etc/apache2/envvars
+
+EXPOSE 80
+EXPOSE 443

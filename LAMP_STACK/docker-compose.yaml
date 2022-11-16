@@ -1,18 +1,25 @@
 version: "3.1"
 services:
     www:
-        build: .
+        build:
+            dockerfile: Dockerfile-php
         ports: 
-            - "8000:80"
-            - "4430:443"
+            - "8080:80"
+            - "8000:443"
         volumes:
             - ./www:/var/www/html/
         depends_on:
                 - db
+
     db:
         image: mysql
-        command: --default-authentication-plugin=caching_sha2_password
+        command:
+            --authentication_policy=mysql_native_password
+            --host_cache_size=0
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_general_ci
         environment:
+            TZ: Asia/Hong_Kong
             MYSQL_ROOT_PASSWORD: test
             MYSQL_DATABASE: myDb
             MYSQL_USER: user
@@ -25,10 +32,11 @@ services:
             - persistent:/var/lib/mysql
 
     phpmyadmin:
-        image: phpmyadmin/phpmyadmin
+        build:
+            dockerfile: Dockerfile-admin
         ports:
-            - "8001:80"
-            - "4431:443"
+            - "8081:80"
+            - "8001:443"
         environment:
             PMA_HOST: 'db'
             PMA_PORT: '3306'

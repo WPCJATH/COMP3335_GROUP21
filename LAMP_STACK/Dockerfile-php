@@ -1,0 +1,21 @@
+FROM php:7.4-apache
+RUN docker-php-ext-install mysqli pdo_mysql
+RUN apt-get update \
+    && apt-get install -y libzip-dev \
+    && apt-get install -y zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install zip
+
+RUN a2enmod ssl && a2enmod rewrite
+RUN mkdir -p /etc/apache2/ssl
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+COPY ./certificate/cert.pem /etc/apache2/ssl/
+COPY ./certificate/cert-key.pem /etc/apache2/ssl/
+COPY ./www.conf /etc/apache2/sites-available/000-default.conf
+
+RUN echo '\nServerName 127.0.0.1' >> /etc/apache2/apache2.conf
+RUN . /etc/apache2/envvars
+
+EXPOSE 80
+EXPOSE 443
