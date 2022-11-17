@@ -4,8 +4,16 @@ RUN mkdir -p /etc/apache2/ssl
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY ./certificate/cert.pem /etc/apache2/ssl/
-COPY ./certificate/cert-key.pem /etc/apache2/ssl/
-COPY ./www-admin.conf /etc/apache2/sites-available/000-default.conf
+COPY ./certificate/cert.key /etc/apache2/ssl/
+COPY ./phpmyadmin/000-default.conf /etc/apache2/sites-available/000-default.conf
+ADD ./phpmyadmin/config.user.inc.php /etc/phpmyadmin/
+
+# RUN mkdir /tmp/client-cert
+# RUN mkdir /tmp/cert
+# COPY ./certificate/client-key.pem /tmp/client-cert/
+# COPY ./certificate/client-cert.pem /tmp/client-cert/
+# COPY ./certificate/ca.pem /tmp/cert/
+
 
 RUN echo '\nServerName 127.0.0.1' >> /etc/apache2/apache2.conf
 RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf

@@ -15,7 +15,7 @@
 
     <?php
 
-    $conn = mysqli_connect('db', 'user', 'test', "myDb");
+    $conn = mysqli_connect('mysql', 'user', 'test', "myDb");
 
     $query = 'SELECT * From Person';
     $result = mysqli_query($conn, $query);
@@ -41,4 +41,3 @@
 </div>
 </body>
 </html>
-

@@ -9,13 +9,12 @@ services:
         volumes:
             - ./www:/var/www/html/
         depends_on:
-                - db
+                - mysql
 
-    db:
+    mysql:
         image: mysql
         command:
             --authentication_policy=mysql_native_password
-            --host_cache_size=0
             --character-set-server=utf8mb4
             --collation-server=utf8mb4_general_ci
         environment:
@@ -25,11 +24,12 @@ services:
             MYSQL_USER: user
             MYSQL_PASSWORD: test
         ports: 
-            - "33306:3306"        
+            - "33306:3306"
         volumes:
-            - ./dump:/docker-entrypoint-initdb.d
-            - ./conf:/etc/mysql/conf.d
+            - ./mysql/dump:/docker-entrypoint-initdb.d
+            - ./mysql/conf:/etc/mysql/conf.d
             - persistent:/var/lib/mysql
+
 
     phpmyadmin:
         build:
@@ -38,12 +38,12 @@ services:
             - "8081:80"
             - "8001:443"
         environment:
-            PMA_HOST: 'db'
-            PMA_PORT: '3306'
+            PMA_HOST: '127.0.0.1'
+            PMA_PORT: '33306'
             PMA_USER: 'root'
             PMA_PASSWORD: "test"
         depends_on:
-            - db
-            
+            - mysql
+
 volumes:
     persistent:
