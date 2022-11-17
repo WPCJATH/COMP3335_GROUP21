@@ -20,7 +20,7 @@ services:
         environment:
             TZ: Asia/Hong_Kong
             MYSQL_ROOT_PASSWORD: test
-            MYSQL_DATABASE: myDb
+            MYSQL_DATABASE: COMP3335_Project
             MYSQL_USER: user
             MYSQL_PASSWORD: test
         ports: 
