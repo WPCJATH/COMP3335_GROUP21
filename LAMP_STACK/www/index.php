@@ -34,6 +34,12 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case 'logout':
                 require_once "./logout.php";
                 break;
+            case 'profile':
+                require_once "./profile.php";
+                break;
+            case 'new_profile':
+                require_once "./new_profile.php";
+                break;
             default:
                 require_once './static/pages-error.html';
         }
@@ -42,6 +48,7 @@ if ($request_keywords && sizeof($request_keywords) > 0){
         switch ($request_keywords[0]){
             case 'signin':
             case 'login':
+            case 'profile':
                 require_once "./login.php";
                 break;
             case 'signup':

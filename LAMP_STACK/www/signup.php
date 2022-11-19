@@ -86,13 +86,23 @@ if ( strlen($pass) < 8 || strlen($pass) > 12 ){
 }
 
 $idx=0;
+$sql_ls[$idx++] = "INSERT INTO `CUSTOMER` (`CUS_ID`, `NAME`, `GENDER`, `AGE`, `ID_NO`, `EMAIL`, `PHONE_NO`)
+VALUES (
+        '".mysqli_real_escape_string($conn, $user)."', 
+        '".mysqli_real_escape_string($conn, $name)."', 
+         ".mysqli_real_escape_string($conn, 'NULL').", 
+         ".mysqli_real_escape_string($conn, 'NULL').", 
+         ".mysqli_real_escape_string($conn, 'NULL').",
+        '".mysqli_real_escape_string($conn, $email)."', 
+         ".mysqli_real_escape_string($conn, 'NULL')."
+        );";
 $sql_ls[$idx++] = "CREATE USER '".mysqli_real_escape_string($conn, $user)."'@'%' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
 $sql_ls[$idx++] = "GRANT ALL ON * To '".mysqli_real_escape_string($conn, $user)."'@'%';";
 $sql_ls[$idx++] = "FLUSH PRIVILEGES;";
 
 for ($i=0; $i<$idx; $i++){
     if (!mysqli_query($conn, $sql_ls[$i])) {
-        send_json(0, "Resister failed, please try later. ");
+        send_json(0, "Register failed, please try later. ");
         mysqli_close($conn);
         exit;
     }

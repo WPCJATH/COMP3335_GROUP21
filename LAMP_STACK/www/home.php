@@ -127,14 +127,14 @@ $user = $_SESSION['user'];
         </li><!-- End Accommodation Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="index.php?signin">
+            <a class="nav-link collapsed" href="index.php?order">
                 <i class="bi bi-receipt"></i>
                 <span>Order</span>
             </a>
         </li><!-- End Order Page Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="index.php?signin">
+            <a class="nav-link collapsed" href="index.php?profile">
                 <i class="bi bi-person"></i>
                 <span>Profile</span>
             </a>
