@@ -6,7 +6,7 @@
 -- Database: hotel
 -- Generation Time: 2022-11-17 22:22:18.9950
 -- -------------------------------------------------------------
-CREATE DATABASE hotel;
+CREATE DATABASE IF NOT EXISTS hotel;
 USE hotel;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
