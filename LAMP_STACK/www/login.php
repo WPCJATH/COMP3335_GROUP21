@@ -10,8 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET'){
 
 $data = read_post_data();
 if (!isset($data['user']) || !isset($data['pass'])){
-    $res['status'] = 0;
-    echo json_encode($res);
+    send_json(0);
     exit;
 }
 
@@ -26,8 +25,7 @@ mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $user, $pass, $config_['mysql_info']['database']);
 
 if (!$conn){
-    $res['status'] = 0;
-    echo json_encode($res);
+    send_json(0);
     exit;
 }
 
@@ -42,8 +40,7 @@ $info = [
 $_SESSION['info'] = aes_cipher_encrypt($info, true);
 $_SESSION['user'] = $user;
 
-$res['status'] = 1;
-echo json_encode($res);
+send_json(1);
 
 # header("Location: index.php?home");
 

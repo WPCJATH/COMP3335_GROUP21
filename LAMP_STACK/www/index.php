@@ -1,11 +1,11 @@
 <?php
 /*
- * Send the page based on the request url and the router map defined in ./lib/config.php
- * no session check in the index page
+ * Send the page based on the request url and the router map shown at the switch statements
+ * no session check in this index page
  *
  * Since it is troublesome if use .htaccess on both docker and macOS machine, we decided to use the index.php as the
- * router page, i.e, based on the request url formation: localhost/index/php.A/B/C to directly transfer the page related
- * A (e.g. localhost/index.php/login will use 'require ./static/login.html' in this page)
+ * router page, i.e, based on the request url formation: localhost/index/php?A to directly transfer the page related
+ * A (e.g. localhost/index.php?login will use 'require ./static/login.html' in this page)
  */
 
 // Check if '?' contained in the current url and if there is any content after the '?'
@@ -26,6 +26,8 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case 'signin':
             case 'login':
             case 'signup':
+                header("Location: index.php?") ;
+                break;
             case 'home':
                 require_once "./home.php";
                 break;

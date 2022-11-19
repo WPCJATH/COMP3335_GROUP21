@@ -15,7 +15,7 @@ Array.prototype.slice.call(needsValidation)
         }, false)
     })
 */
-function customAlert(msg){
+function customAlert(msg, elementId="insert"){
     let msg_bar = document.getElementById("alert_msg");
     if (msg_bar===null){
         document.getElementById("insert").insertAdjacentHTML('afterend',

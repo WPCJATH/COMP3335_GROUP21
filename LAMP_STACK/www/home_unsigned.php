@@ -135,34 +135,35 @@ header_check();
         <div class="row">
 
             <?php
-                $room_info = [
-                    [
-                            'id' => 'Presidential Suite',
-                            'price' => 3000,
-                            'pic_dir' => 'room_type1.jpg',
-                            'capacity' => 4
-                    ],
-                    [
-                            'id' => 'Royal Suite',
-                            'price' => 2000,
-                            'pic_dir' => 'room_type2.jpg',
-                            'capacity' => 3
-                    ],
-                    [
-                            'id' => 'Royal Suite',
-                            'price' => 1000,
-                            'pic_dir' => 'room_type3.jpg',
-                            'capacity' => 2
-                    ]
-                ];
+                include_once "./lib/config.php";
+                $config_ = get_config();
+
+                error_reporting(0);
+                mysqli_report(MYSQLI_REPORT_OFF);
+                $conn = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
+                    $config_['mysql_info']['computer_pass'], $config_['mysql_info']['database']);
+
+                $sql = "select * from `ROOM_TYPE`;";
+                $result = mysqli_query($conn, $sql);
+                $count = 0;
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while($row = mysqli_fetch_assoc($result)){
+                        $room_info[$count++] = $row;
+                    }
+                }
+                mysqli_close($conn);
+
+                usort($room_info, function($a, $b){
+                    return $a['PRICE'] > $b['PRICE'] ? 1:-1;
+                });
 
                 $count = 0;
                 while (isset($room_info[$count]) && $room = $room_info[$count]){
                     $count++;
-                    $id = $room['id'];
-                    $price = $room['price'];
-                    $pic_dir = $room['pic_dir'];
-                    $capacity = $room['capacity'];
+                    $id = $room['TYPE'];
+                    $price = $room['PRICE'];
+                    $pic_dir = $room['IMAGE_DIR'];
+                    $capacity = $room['CAPACITY'];
                     echo <<< EOF
                             <div class="col-lg-6">
                                 <div class="card">
@@ -179,50 +180,18 @@ header_check();
                                                     <div class="col-lg-3 col-md-4 label">Capacity</div>
                                                     <div class="col-lg-9 col-md-8">$capacity</div>
                                                 </div>
+                                                <div class="col-sm-5">
+                                                    <div >
+                                                        <a  class="btn btn-primary" href="index.php?signup">Register</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div><!-- End Bordered Tabs -->
                                     </div>
+                                  
                                 </div>
                             </div>
-                            <!-- End Card with an image on top -->
-                            <!-----Start of Reservation part------->
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Make a Reservation</h5>
-                                        <!-- General Form Elements -->
-                                        <form>
-                                            <div class="row mb-3">
-                                                <label for="inputDate1" class="col-sm-2 col-form-label">Check in</label>
-                                                <div class="col-sm-10">
-                                                    <input id="inputDate1" type="date" class="form-control" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <label for="inputDate2" class="col-sm-2 col-form-label">Check out</label>
-                                                <div class="col-sm-10">
-                                                    <input id="inputDate1" type="date" class="form-control" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Room Type</label>
-                                              <div class="col-sm-10">
-                                                <select class="form-select" aria-label="Default select example" disabled>
-                                                  <option selected>$id</option>
-                                                </select>
-                                              </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <label class="col-sm-2 col-form-label"> </label>
-                                                <div class="col-sm-10">
-                                                    <a  class="btn btn-primary" href="index.php?signup">Register</a>
-                                                </div>
-                                            </div>
-                                        </form><!-- End General Form Elements -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-----End of Reservation----->        
+                            <!-- End Card with an image on top -->  
                     EOF;
                 }
             ?>

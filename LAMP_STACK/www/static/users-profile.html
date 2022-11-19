@@ -139,7 +139,89 @@
     <section class="section profile">
       <div class="row">
 
-        <div class="col-xl-8">
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Add New Profile</button>
+                </li>
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                  <!-- Profile Edit Form -->
+                  <form id="add-new-form" class="needs-validatio" novalidate>
+
+                    <div class="row mb-3">
+                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="text" class="form-control" id="Email" value="" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="gender" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                      <div class="col-md-8 col-lg-9">
+                          <select id="gender" class="form-select" required aria-label="select example">
+                            <option value="">--select gender--</option>
+                            <option value="1">Female</option>
+                            <option value="2">Male</option>
+                          </select>
+                      </div>
+                      <div class="invalid-feedback">Example invalid select feedback</div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="Phone5" class="col-md-4 col-lg-3 col-form-label">Age</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone" type="number" class="form-control" id="Phone5" min="0" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="Phone4" class="col-md-4 col-lg-3 col-form-label">ID Number</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone" type="text" class="form-control" id="Phone4" value="" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email3" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone" type="email" class="form-control" id="email3" value="" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="Phone3" class="col-md-4 col-lg-3 col-form-label">Phone Number</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone" type="text" class="form-control" id="Phone3" value="" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary needs_validation_" onclick="func(event)">Upload</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+
+        </div>
+
+        <div class="col-xl-4">
 
           <div class="card">
             <div class="card-body pt-3">
@@ -151,18 +233,14 @@
                 </li>
 
                 <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Contact Information</button>
-                </li>
-
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
                 </li>
 
               </ul>
               <div class="tab-content pt-2">
 
                 <div class="tab-pane fade show active profile-overview pt-3" id="profile-overview">
-
+                  <br>
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
                     <div class="col-lg-9 col-md-8">Ying Xu</div>
@@ -192,6 +270,10 @@
                     <div class="col-lg-3 col-md-4 label">Phone</div>
                     <div class="col-lg-9 col-md-8">1234 5678</div>
                   </div>
+                  <br><br>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                  </div>
 
                 </div>
 
@@ -201,16 +283,16 @@
                   <form>
 
                     <div class="row mb-3">
-                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                      <label for="Email1" class="col-md-4 col-lg-3 col-form-label">Email</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="email" type="email" class="form-control" id="Email" value="">
+                        <input name="email" type="email" class="form-control" id="Email1" value="">
                       </div>
                     </div>
 
                     <div class="row mb-3">
-                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                      <label for="Phone1" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="phone" type="text" class="form-control" id="Phone" value="">
+                        <input name="phone" type="text" class="form-control" id="Phone1" value="">
                       </div>
                     </div>
 
@@ -221,36 +303,6 @@
 
                 </div>
 
-                <div class="tab-pane fade profile-overview pt-3" id="profile-change-password">
-                  <!-- Change Password Form -->
-                  <form>
-                    <div class="row">
-                      <div class="col-lg-3 col-md-4 label">Current Password</div>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="password" type="password" class="form-control" id="currentPassword">
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-lg-3 col-md-4 label">New Password</div>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="newpassword" type="password" class="form-control" id="newPassword">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <div class="col-lg-3 col-md-4 label">Re-enter New Password</div>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
-                      </div>
-                    </div>
-
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Change Password</button>
-                    </div><!-- End Change Password Form -->
-                  </form>
-                </div>
-
               </div><!-- End Bordered Tabs -->
 
             </div>
@@ -258,6 +310,8 @@
 
         </div>
       </div>
+
+
     </section>
 
 
@@ -281,6 +335,51 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/tool_functions.js"></script>
+  <script src="assets/jquery/jquery-3.6.0.min.js"></script>
+  <script>
+
+    function func(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      var form = document.getElementById('add-new-form');
+      if (!form.checkValidity()){
+        form.classList.add('was-validated');
+        return false;
+      }
+
+      let username = document.getElementById("yourUsername").value;
+      let password = document.getElementById("yourPassword").value;
+      localStorage.setItem('user', username);
+
+      $.ajax({
+        url: 'index.php?signin',
+        type : "POST",
+        dataType : 'json',
+        data : {
+          user: username,
+          pass: password
+        },
+        success: function(results) {
+          console.log(results);
+          if (results.status === 1){
+            customAlert("Welcome! " + username + ".");
+            window.location.replace("index.php?home");
+          }
+          else{
+            customAlert("Oops! The ID and Password you entered are not match. Please try again.");
+            document.getElementById("yourPassword").value = "";
+          }
+        },
+        error: function() {
+          customAlert("Oops! Request failed! Please check your Internet Connection.");
+          document.getElementById("yourPassword").value = "";
+        }
+      });
+      return false;
+    }
+  </script>
 
 </body>
 

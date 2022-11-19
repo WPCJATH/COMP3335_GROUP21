@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * A file to hold some constant configs.
+ *
+ * @return array
+ *  The config defined here.
+ */
 function get_config(): array
 {
     return [

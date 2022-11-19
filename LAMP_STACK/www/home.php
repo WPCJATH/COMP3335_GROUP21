@@ -40,6 +40,21 @@ $user = $_SESSION['user'];
     * Author: BootstrapMade.com
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
+
+    <script>
+        Date.prototype.toDateInputValue = (function() {
+            let local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+
+        function date_onchange(element){
+            let date = new Date(element.value);
+            if (date < new Date()){
+
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -144,34 +159,35 @@ $user = $_SESSION['user'];
         <div class="row">
 
             <?php
-            $room_info = [
-                [
-                    'id' => 'Presidential Suite',
-                    'price' => 3000,
-                    'pic_dir' => 'room_type1.jpg',
-                    'capacity' => 4
-                ],
-                [
-                    'id' => 'Royal Suite',
-                    'price' => 2000,
-                    'pic_dir' => 'room_type2.jpg',
-                    'capacity' => 3
-                ],
-                [
-                    'id' => 'Royal Suite',
-                    'price' => 1000,
-                    'pic_dir' => 'room_type3.jpg',
-                    'capacity' => 2
-                ]
-            ];
+            include_once "./lib/config.php";
+            $config_ = get_config();
+
+            error_reporting(0);
+            mysqli_report(MYSQLI_REPORT_OFF);
+            $conn = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
+                $config_['mysql_info']['computer_pass'], $config_['mysql_info']['database']);
+
+            $sql = "select * from `ROOM_TYPE`;";
+            $result = mysqli_query($conn, $sql);
+            $count = 0;
+            if ($result && mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)){
+                    $room_info[$count++] = $row;
+                }
+            }
+            mysqli_close($conn);
+
+            usort($room_info, function($a, $b){
+                return $a['PRICE'] > $b['PRICE'] ? 1:-1;
+            });
 
             $count = 0;
             while (isset($room_info[$count]) && $room = $room_info[$count]){
                 $count++;
-                $id = $room['id'];
-                $price = $room['price'];
-                $pic_dir = $room['pic_dir'];
-                $capacity = $room['capacity'];
+                $id = $room['TYPE'];
+                $price = $room['PRICE'];
+                $pic_dir = $room['IMAGE_DIR'];
+                $capacity = $room['CAPACITY'];
                 echo <<< EOF
                             <div class="col-lg-6">
                                 <div class="card">
@@ -202,35 +218,76 @@ $user = $_SESSION['user'];
                                         <!-- General Form Elements -->
                                         <form>
                                             <div class="row mb-3">
-                                                <label for="inputDate1" class="col-sm-2 col-form-label">Check in</label>
+                                                <label for="inputDate$count" class="col-sm-2 col-form-label">Check In</label>
                                                 <div class="col-sm-10">
-                                                    <input id="inputDate1" type="date" class="form-control" disabled>
+                                                    <input id="inputDate$count" type="date" class="form-control">
+
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label for="inputDate2" class="col-sm-2 col-form-label">Check out</label>
+                                                <label for="duration" class="col-sm-2 col-form-label" >Occupancy Days</label>
                                                 <div class="col-sm-10">
-                                                    <input id="inputDate1" type="date" class="form-control" disabled>
+                                                    <input id="duration$count" type="number" class="form-control" min="1" value="1">
+
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Room Type</label>
-                                              <div class="col-sm-10">
-                                                <select class="form-select" aria-label="Default select example" disabled>
-                                                  <option selected>$id</option>
-                                                </select>
+                                                <label class="col-sm-2 col-form-label">Guest Number</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-select" aria-label="Default select example">
+                    EOF;
+
+                echo "<option selected value=$capacity>$capacity</option>";
+                for ($i=$capacity-1; $i>0;$i--)
+                    echo "<option value=$i>$i</option>";
+
+                echo <<< EOF
+                                                    </select>
+                                                    <div class="invalid-feedback">Please enter your username.</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row mb-3">
+                                              <label class="col-sm-2 col-form-label">Guest Members:</label>
+                                              <div class="row col-sm-8">
+                                                    <div class="form-check col-sm-5">
+                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" checked>
+                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
+                                                        <div class="invalid-feedback">You must agree before submitting.</div>
+                                                     </div>
+                                                     
+                                                     <div class="form-check col-sm-5">
+                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" >
+                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
+                                                        <div class="invalid-feedback">You must agree before submitting.</div>
+                                                     </div>
+                                                     
+                                                     <div class="form-check col-sm-5">
+                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" >
+                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
+                                                        <div class="invalid-feedback">You must agree before submitting.</div>
+                                                     </div>
                                               </div>
+                                              <div class="form-check col-sm-2">
+                                                   <a class="fs-6 btn btn-info" href="index.php?profile">Add New</a>
+                                              </div>
+                                              
                                             </div>
+
+                                            
                                             <div class="row mb-3">
                                                 <label class="col-sm-2 col-form-label"> </label>
                                                 <div class="col-sm-10">
-                                                    <a  class="btn btn-primary" href="index.php?signup">Register</a>
+                                                    <a  class="btn btn-primary" type="submit">Register</a>
                                                 </div>
                                             </div>
                                         </form><!-- End General Form Elements -->
                                     </div>
                                 </div>
                             </div>
+                            <script>
+                                document.getElementById("inputDate$count").value=new Date().toDateInputValue();
+                            </script>
                             <!-----End of Reservation----->        
                     EOF;
             }
@@ -261,6 +318,7 @@ $user = $_SESSION['user'];
 
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
+
 
 </body>
 

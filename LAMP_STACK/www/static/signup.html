@@ -87,7 +87,7 @@
 
                     <div class="col-12" id="insert">
                       <label for="yourPassword" class="form-label">Password</label>
-                      <input type="text" name="password" class="form-control" id="yourPassword" required>
+                      <input type="text" name="password" class="form-control" id="yourPassword" placeholder="Should be in length 8-12" required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
@@ -174,7 +174,7 @@
           console.log(results);
           if (results.status === 1){
             localStorage.setItem('user', username);
-            customAlert('Successful registration! Click <a href=\"index.php?login\">here</a> to log in.');
+            customAlert('Successful registration! Click <a href="index.php?login">here</a> to log in.');
           }
           else{
             customAlert(results.msg);
