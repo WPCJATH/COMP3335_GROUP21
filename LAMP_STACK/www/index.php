@@ -40,6 +40,9 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case 'new_profile':
                 require_once "./new_profile.php";
                 break;
+            case 'delete_profile':
+                require_once "./delete_profile.php";
+                break;
             default:
                 require_once './static/pages-error.html';
         }

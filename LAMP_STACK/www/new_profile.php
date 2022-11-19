@@ -26,10 +26,10 @@ if (!isset($data['gender'])){
 }
 $gender = $data['gender'];
 if ($gender == 0 || $gender === 'male'){
-    $gender = "male";
+    $gender = "female";
 }
 elseif ($gender == 1 || $gender === 'female'){
-    $gender = 'female';
+    $gender = 'male';
 }
 else{
     send_json(0, "Invalid gender!");
@@ -94,13 +94,34 @@ include_once "./lib/config.php";
 $config_ = get_config();
 
 $info = get_user_info();
-# error_reporting(0);
-# mysqli_report(MYSQLI_REPORT_OFF);
+error_reporting(0);
+mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $info['user'], $info['pass'], $config_['mysql_info']['database']);
 
 if (!$conn){
-    send_json(0, "Server interval error, please try later! ".mysqli_error($conn));
+    send_json(0, "Server interval error, please try later! ");
+    exit;
+}
+
+// If CUS_ID is set, then means this is a request of updating an existing profile.
+if (isset($data['cus_id'])){
+    $sql = "UPDATE `CUSTOMER` SET
+            `NAME` = '".mysqli_real_escape_string($conn, $full_name)."',
+            `GENDER` = '".mysqli_real_escape_string($conn, $gender)."',
+            `AGE` = '".mysqli_real_escape_string($conn, $age)."',
+            `ID_NO` = '".mysqli_real_escape_string($conn, $id)."',
+            `EMAIL` = '".mysqli_real_escape_string($conn, $email)."',
+            `PHONE_NO` = '".mysqli_real_escape_string($conn, $phone)."'
+            WHERE `CUS_ID` = '".mysqli_real_escape_string($conn, $data['cus_id'])."';
+            ";
+    $result = mysqli_query($conn, $sql);
+    if (!$result){
+        send_json(0, "Server interval error,  please try later! ");
+        mysqli_close($conn);
+        exit;
+    }
     mysqli_close($conn);
+    send_json(1);
     exit;
 }
 
@@ -109,7 +130,7 @@ while (true){
     $sql = "select `CUS_ID` from `CUSTOMER` where `CUS_ID`='".mysqli_real_escape_string($conn, $entry_id)."';";
     $result = mysqli_query($conn, $sql);
     if (!$result){
-        send_json(0, "Server interval error,  please try later! ".mysqli_error($conn));
+        send_json(0, "Server interval error,  please try later! ");
         exit;
     }
     if (! mysqli_num_rows($result) > 0)
@@ -128,7 +149,8 @@ VALUES (
         );";
 $result = mysqli_query($conn, $sql);
 if (!$result){
-    send_json(0, "Server interval error,  please try later! ".mysqli_error($conn));
+    send_json(0, "Server interval error,  please try later! ");
+    mysqli_close($conn);
     exit;
 }
 
@@ -136,7 +158,8 @@ $sql = "INSERT INTO `TRAVEL_PARTNER` (`PARTNER_ID`, `HOLDER`) VALUES
         ('".mysqli_real_escape_string($conn, $entry_id)."', '".mysqli_real_escape_string($conn, $info['user'])."');";
 $result = mysqli_query($conn, $sql);
 if (!$result){
-    send_json(0, "Server interval error,  please try later! ".mysqli_error($conn));
+    send_json(0, "Server interval error,  please try later! ");
+    mysqli_close($conn);
     exit;
 }
 

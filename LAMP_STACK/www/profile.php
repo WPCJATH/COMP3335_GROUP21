@@ -63,19 +63,19 @@ $user = $_SESSION['user'];
             <li class="nav-item dropdown pe-3">
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <span class="d-none d-md-block dropdown-toggle ps-2"><?php $user?></span>
-                </a><!-- End Profile Image Icon -->
+                    <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $user?></span>
+                </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
-                        <h6><?php $user?></h6>
+                        <h6><?php echo $user?></h6>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
+                        <a class="dropdown-item d-flex align-items-center" href="index.php?profile">
                             <i class="bi bi-person"></i>
                             <span>My Profile</span>
                         </a>
@@ -154,10 +154,10 @@ $user = $_SESSION['user'];
                             <li class="nav-item">
                                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Add New Profile</button>
                             </li>
-
+                            <li class="nav-item"></li>
                         </ul>
                         <div class="tab-content pt-2">
-
+                            <br>
                             <!-- Profile Edit Form -->
                             <form id="add-new-form" class="needs-validation" novalidate>
 
@@ -214,7 +214,7 @@ $user = $_SESSION['user'];
                                 </div>
 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary needs_validation_" onclick="func(event)">Upload</button>
+                                    <button type="submit" class="btn btn-primary needs_validation_" onclick="upload_new_profile(event)">Upload</button>
                                 </div>
                             </form><!-- End Profile Edit Form -->
 
@@ -226,94 +226,232 @@ $user = $_SESSION['user'];
 
             </div>
 
-            <div class="col-xl-4">
+            <?php
+            include_once "./lib/config.php";
+            include_once "./lib/toolfuctions.php";
+            $config_ = get_config();
+            $user_info = get_user_info();
 
-                <div class="card">
-                    <div class="card-body pt-3">
-                        <!-- Bordered Tabs -->
-                        <ul class="nav nav-tabs nav-tabs-bordered">
+            # error_reporting(0);
+            # mysqli_report(MYSQLI_REPORT_OFF);
+            $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
+                $user_info['pass'], $config_['mysql_info']['database']);
 
-                            <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Profile Details</button>
-                            </li>
+            $sql = "SELECT * FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $user_info['user'])."';";
+            $result = mysqli_query($conn, $sql);
+            $count1 = 0;
+            $user_profiles = [];
+            if ($result && mysqli_num_rows($result) > 0)
+                $user_profiles[$count1++] = mysqli_fetch_assoc($result);
 
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
-                            </li>
+            foreach ($user_profiles[0] as $key => $value){
+                if (!isset($user_profiles[0][$key])){
+                    $count1--;
+                    break;
+                }
+            }
 
-                        </ul>
-                        <div class="tab-content pt-2">
 
-                            <div class="tab-pane fade show active profile-overview pt-3" id="profile-overview">
-                                <br>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                    <div class="col-lg-9 col-md-8">Ying Xu</div>
-                                </div>
+            $sql = "SELECT `PARTNER_ID` FROM `TRAVEL_PARTNER` 
+                    WHERE `HOLDER`='".mysqli_real_escape_string($conn, $user_info['user'])."';";
+            $result = mysqli_query($conn, $sql);
+            $count2 = 0;
+            $partner_ids = [];
+            if ($result && mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)){
+                    $partner_ids[$count2++] = $row['PARTNER_ID'];
+                }
+            }
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Gender</div>
-                                    <div class="col-lg-9 col-md-8">Female</div>
-                                </div>
+            foreach ($partner_ids as $partner_id){
+                $sql = "SELECT * FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $partner_id)."';";
+                $result = mysqli_query($conn, $sql);
+                if(!$result || !mysqli_num_rows($result) > 0){
+                    continue;
+                }
+                $user_profiles[$count1++] = mysqli_fetch_assoc($result);
+            }
+            mysqli_close($conn);
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Age</div>
-                                    <div class="col-lg-9 col-md-8">21</div>
-                                </div>
+            $count=0;
+            while (isset($user_profiles[$count]) && $user_profile = $user_profiles[$count]){
+                $count++;
+                $cus_id = $user_profile['CUS_ID'];
+                $cus_name = $user_profile['NAME'];
+                $gender = $user_profile['GENDER'];
+                $age = $user_profile['AGE'];
+                $id_no = $user_profile['ID_NO'];
+                $email = $user_profile['EMAIL'];
+                $phone = $user_profile['PHONE_NO'];
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">ID number</div>
-                                    <div class="col-lg-9 col-md-8">12345</div>
-                                </div>
+                $select = '
+                                                    <option '.($gender===''? "selected": "").' value="">--select gender--</option>
+                                                    <option '.($gender==='female'? "selected": "").' value="0">Female</option>
+                                                    <option '.($gender==='male'? "selected": "").' value="1">Male</option>
+';
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Email</div>
-                                    <div class="col-lg-9 col-md-8">xy@123.com</div>
-                                </div>
+                echo <<< EOF
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-body pt-3">
+                            <!-- Bordered Tabs -->
+                            <ul class="nav nav-tabs nav-tabs-bordered">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview$count">Profile Details</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit$count">Edit Profile</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content pt-2">
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Phone</div>
-                                    <div class="col-lg-9 col-md-8">1234 5678</div>
-                                </div>
-                                <br><br>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                                </div>
-
-                            </div>
-
-                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
-                                <!-- Profile Edit Form -->
-                                <form>
-
-                                    <div class="row mb-3">
-                                        <label for="Email1" class="col-md-4 col-lg-3 col-form-label">Email</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="email" type="email" class="form-control" id="Email1" value="">
-                                        </div>
+                                <div class="tab-pane fade show active profile-overview pt-3" id="profile-overview$count">
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                                        <div class="col-lg-9 col-md-8">$cus_name</div>
                                     </div>
 
-                                    <div class="row mb-3">
-                                        <label for="Phone1" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="phone" type="text" class="form-control" id="Phone1" value="">
-                                        </div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Gender</div>
+                                        <div class="col-lg-9 col-md-8">$gender</div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Age</div>
+                                        <div class="col-lg-9 col-md-8">$age</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">ID number</div>
+                                        <div class="col-lg-9 col-md-8">$id_no</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Email</div>
+                                        <div class="col-lg-9 col-md-8">$email</div>
+                                    </div>
+
+                                    <div class="row" id="insert_view_$count">
+                                        <div class="col-lg-3 col-md-4 label">Phone</div>
+                                        <div class="col-lg-9 col-md-8">$phone</div>
+                                    </div>
+                                    <br><br>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        <button id="delete_btn$count" class="btn btn-outline-danger">Delete</button>
                                     </div>
-                                </form><!-- End Profile Edit Form -->
 
-                            </div>
+                                </div>
 
-                        </div><!-- End Bordered Tabs -->
+                                <div class="tab-pane fade profile-edit pt-3" id="profile-edit$count">
 
+                                    <!-- Profile Edit Form -->
+                                    <form id="update_form$count">
+
+                                        <div class="row mb-3">
+                                            <label for="name_update$count" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input type="text" class="form-control" id="name_update$count" value="$cus_name" required>
+                                                <div class="invalid-feedback">Please enter full name.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="gender_new$count" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <select id="gender_new$count" class="form-select" required aria-label="select example">
+                                                      $select
+                                                </select>
+                                            </div>
+                                            <div class="invalid-feedback">Please choose a gender.</div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="age_update$count" class="col-md-4 col-lg-3 col-form-label">Age</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input type="number" class="form-control" id="age_update$count" min="0" value="$age" required>
+                                                <div class="invalid-feedback">Please enter the name.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="id_update$count" class="col-md-4 col-lg-3 col-form-label">ID Number</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input type="text" class="form-control" id="id_update$count" value="$id_no" required>
+                                                <div class="invalid-feedback">Please enter the ID number.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="email_update$count" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input type="email" class="form-control" id="email_update$count" value="$email" required>
+                                                <div class="invalid-feedback">Please enter the email.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3" id="insert$count">
+                                            <label for="phone_update$count" class="col-md-4 col-lg-3 col-form-label">Phone Number</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input type="text" class="form-control" id="phone_update$count" value="$phone"  required>
+                                                <div class="invalid-feedback">Please enter the phone number.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary needs_validation_" id="upload_btn$count">Upload</button>
+                                        </div>
+                                    </form><!-- End Profile Edit Form -->
+
+                                </div>
+
+                            </div><!-- End Bordered Tabs -->
+
+                        </div>
                     </div>
-                </div>
 
-            </div>
+                </div>
+                <script>
+                
+                    document.querySelector("#upload_btn$count").onclick = function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                
+                        let form = document.getElementById('update_form$count');
+                        if (!form.checkValidity()){
+                            form.classList.add('was-validated');
+                            return false;
+                        }
+                        
+                        let full_name = document.getElementById("name_update$count").value;
+                        let gender = document.getElementById("gender_new$count").value;
+                        let age = document.getElementById("age_update$count").value;
+                        let id = document.getElementById("id_update$count").value;
+                        let phone = document.getElementById("phone_update$count").value;
+                        let email = document.getElementById("email_update$count").value;
+                        
+                        let json_data = '{' +
+                                    '"cus_id" : "$cus_id",' +
+                                    '"full_name" : "' + full_name + '",' +
+                                    '"gender" : "' + gender + '",' +
+                                    '"age" : "' + age + '",' +
+                                    '"id" : "' + id + '",' +
+                                    '"phone" : "' + phone + '",' +
+                                    '"email" : "' + email + '"' +
+                                '}';
+                        console.log(json_data);
+                        return update_profile(JSON.parse(json_data), "insert$count");
+                    }
+                    
+                    document.querySelector("#delete_btn$count").onclick = function(){
+                       delete_profile("$cus_id", "insert_view_$count");
+                    }
+                </script>
+                
+                EOF;
+            }
+            ?>
+
         </div>
 
 
@@ -343,11 +481,11 @@ $user = $_SESSION['user'];
 <script src="assets/js/tool_functions.js"></script>
 <script src="assets/jquery/jquery-3.6.0.min.js"></script>
 <script>
-    function func(event){
+    function upload_new_profile(event){
         event.preventDefault();
         event.stopPropagation();
 
-        var form = document.getElementById('add-new-form');
+        let form = document.getElementById('add-new-form');
         if (!form.checkValidity()){
             form.classList.add('was-validated');
             return false;
@@ -384,6 +522,54 @@ $user = $_SESSION['user'];
             },
             error: function() {
                 customAlert("Oops! Request failed! Please check your Internet Connection.");
+            }
+        });
+        return false;
+    }
+
+    function update_profile(json_data, alert_id){
+        $.ajax({
+            url: 'index.php?new_profile',
+            type : "POST",
+            dataType : 'json',
+            data : json_data,
+            success: function(results) {
+                console.log(results);
+                if (results.status === 1){
+                    customAlert("Profile updated successfully!", alert_id);
+                    window.location.replace("index.php?profile");
+                }
+                else{
+                    customAlert(results.msg, alert_id);
+                }
+            },
+            error: function() {
+                customAlert("Oops! Request failed! Please check your Internet Connection.", alert_id);
+            }
+        });
+        return false;
+    }
+
+    function delete_profile(cus_id, alert_id){
+        $.ajax({
+            url: 'index.php?delete_profile',
+            type : "POST",
+            dataType : 'json',
+            data : {
+                cus_id : cus_id
+            },
+            success: function(results) {
+                console.log(results);
+                if (results.status === 1){
+
+                    window.location.replace("index.php?profile");
+                }
+                else{
+                    customAlert(results.msg, alert_id);
+                }
+            },
+            error: function() {
+                customAlert("Oops! Request failed! Please check your Internet Connection.", alert_id);
             }
         });
         return false;

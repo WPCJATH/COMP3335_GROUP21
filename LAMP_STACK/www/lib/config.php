@@ -12,7 +12,7 @@ function get_config(): array
         'debug' => true,
         'session_key' => 'socjrhstcmtkshfeitnxhaweocgsiurk',
         'life_time' => 20 * 60,
-        'read_raw_post' => true,
+        'read_raw_post' => false,
 
         'mysql_info' => [
             'host' => 'localhost',

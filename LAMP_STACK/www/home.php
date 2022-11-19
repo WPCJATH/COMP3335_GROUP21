@@ -90,7 +90,7 @@ $user = $_SESSION['user'];
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                        <a class="dropdown-item d-flex align-items-center" href="index.php?profile">
                             <i class="bi bi-person"></i>
                             <span>My Profile</span>
                         </a>
@@ -160,17 +160,23 @@ $user = $_SESSION['user'];
 
             <?php
             include_once "./lib/config.php";
+            include_once "./lib/toolfuctions.php";
             $config_ = get_config();
+            $user_info = get_user_info();
 
             error_reporting(0);
             mysqli_report(MYSQLI_REPORT_OFF);
-            $conn = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
-                $config_['mysql_info']['computer_pass'], $config_['mysql_info']['database']);
+            $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
+                $user_info['pass'], $config_['mysql_info']['database']);
 
             $sql = "select * from `ROOM_TYPE`;";
             $result = mysqli_query($conn, $sql);
             $count = 0;
-            if ($result && mysqli_num_rows($result) > 0) {
+            if(!$result){
+                header("Location: index.php?404_page_not_found");
+                exit;
+            }
+            if (mysqli_num_rows($result) > 0) {
                 while($row = mysqli_fetch_assoc($result)){
                     $room_info[$count++] = $row;
                 }
