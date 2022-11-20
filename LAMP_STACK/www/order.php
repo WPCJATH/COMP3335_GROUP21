@@ -154,8 +154,8 @@ $user = $_SESSION['user'];
                             $config_ = get_config();
                             $user_info = get_user_info();
 
-                            # error_reporting(0);
-                            # mysqli_report(MYSQLI_REPORT_OFF);
+                            error_reporting(0);
+                            mysqli_report(MYSQLI_REPORT_OFF);
                             $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
                                 $user_info['pass'], $config_['mysql_info']['database']);
 

@@ -35,7 +35,7 @@ session_start();
  * @return void
  */
 function header_check(){
-    if (!strstr($_SERVER['REQUEST_URI'], '/index.php')){
+    if (!strstr($_SERVER['REQUEST_URI'], '/index.php') and !strstr($_SERVER['REQUEST_URI'], '/temp.php')){
         header("Location: index.php?home");
         exit;
     }

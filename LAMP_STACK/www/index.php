@@ -74,6 +74,9 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                     case 'checkin':
                         require_once "./checkin.php";
                         break;
+                    case 'update_checkin':
+                        require_once "./update_checkin.php";
+                        break;
                     case 'profile':
                         require_once "./staff_profile.php";
                         break;
@@ -118,7 +121,7 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         require_once "./logout.php";
                         break;
                     case 'profile':
-                        require_once "./profile.php";
+                        require_once "./staff_profile.php";
                         break;
                     default:
                         require_once './static/pages-error.html';

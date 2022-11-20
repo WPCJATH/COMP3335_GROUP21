@@ -31,8 +31,9 @@ if (!$conn){
 
 $sql = "SELECT `POSITION` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
 $result = mysqli_query($conn, $sql);
+
 $role = "customer";
-if ($result || !mysqli_num_rows($result) > 0){
+if ($result && mysqli_num_rows($result) > 0){
     $role = mysqli_fetch_assoc($result)['POSITION'];
 }
 
