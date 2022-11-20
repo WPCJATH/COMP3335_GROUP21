@@ -50,7 +50,7 @@ $user = $_SESSION['user'];
 <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center">
+        <a href="index.php?home" class="logo d-flex align-items-center">
             <img src="assets/img/logo.png" alt="">
             <span class="d-none d-lg-block">COMP3335 Hotel</span>
         </a>
@@ -146,274 +146,171 @@ $user = $_SESSION['user'];
             <div class="col-lg">
                 <div class="card">
                     <div class="card-body">
-                        <!--      <h5 class="card-title">Choose an order to view</h5>   --->
+                        <div class="accordion" id="accordionFlushExample">
+                            <?php
 
-                        <!-- Accordion without outline borders -->
-                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            include_once "./lib/config.php";
+                            include_once "./lib/toolfuctions.php";
+                            $config_ = get_config();
+                            $user_info = get_user_info();
 
+                            # error_reporting(0);
+                            # mysqli_report(MYSQLI_REPORT_OFF);
+                            $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
+                                $user_info['pass'], $config_['mysql_info']['database']);
 
-                            <div class="accordion-item">
+                            $sql = "SELECT `RES_ID`, `CHECKIN_DATE`, `DURATION`, `ROOM_TYPE`, `AMT`, `CANCELLED`, `IS_ORDER`
+                                    FROM `RESERVATION` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $user_info['user'])."';";
 
-                                <h2 class="accordion-header" id="flush-headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                        Presidential Suite
-                                        <!------TODO: change 'Presidential Suite' according to the room type in the order----->
-                                    </button>
-                                </h2>
+                            $result = mysqli_query($conn, $sql);
+                            $count1 = 0;
+                            $reservations = [];
+                            if ($result && mysqli_num_rows($result) > 0){
+                                while ($row = mysqli_fetch_assoc($result)){
+                                    $reservations[$count1++] = $row;
+                                }
+                            }
+                            else{
+                                echo "<p class=\"text-center\">You do not have any order or reservation yet. Click <a href=\"index.php?home\">here</a> to place an reservation.</p>";
+                            }
 
-                                <div id="flush-collapseOne" class="accordion-collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                    <div class="row">
-                                        <div class="col-lg">
-                                            <div class="card">
-                                                <div class="card-body pt-3">
-                                                    <!-- Bordered Tabs -->
-                                                    <ul class="nav nav-tabs nav-tabs-bordered">
+                            while ($count1 > 0){
+                                $count1--;
+                                $reservation = $reservations[$count1];
+                                $res_id = $reservation['RES_ID'];
+                                $check_in = $reservation['CHECKIN_DATE'];
+                                $duration = $reservation['DURATION'];
+                                $amt = $reservation['AMT'];
+                                $room_type = $reservation['ROOM_TYPE'];
+                                $is_cancelled = $reservation['CANCELLED'];
+                                $is_order = $reservation['IS_ORDER'];
 
-                                                        <li class="nav-item">
-                                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#order-details1">Order Details</button>
-                                                            <!--- TODO: change the if of this button: "#order-details1"---->
-                                                        </li>
+                                $sql = "SELECT `PARTNER_ID` FROM `TRAVEL_PARTNER_INORDER` WHERE `RES_ID`='".mysqli_real_escape_string($conn, $res_id)."';";
+                                $result = mysqli_query($conn, $sql);
+                                $count2 = 0;
+                                $partner_ids = [];
+                                if ($result && mysqli_num_rows($result) > 0){
+                                    while ($row = mysqli_fetch_assoc($result)){
+                                        $partner_ids[$count2++] = $row['PARTNER_ID'];
+                                    }
+                                }
 
-                                                        <li class="nav-item">
-                                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#order-edit1">Edit Order</button>
-                                                            <!--- TODO: change the if of this button: "#order-edit1"---->
-                                                        </li>
+                                $count3 = 0;
+                                $partners_info = [];
+                                foreach ($partner_ids as $partner_id){
+                                    $sql = "SELECT `NAME`, `ID_NO` FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $partner_id)."';";
+                                    $result = mysqli_query($conn, $sql);
+                                    if ($result && mysqli_num_rows($result) > 0)
+                                        $partners_info[$count3++] = mysqli_fetch_assoc($result);
+                                }
 
-                                                    </ul>
-                                                    <div class="tab-content pt-2">
+                                $show = ($is_cancelled)? "":"show";
+                                $cancelled = ($is_cancelled)? "(Cancelled)":"";
+                                $disabled = ($is_order)? "disabled":"";
+                                $expanded = ($is_cancelled);
 
-                                                        <div class="tab-pane fade show active profile-overview" id="order-details1">
-                                                            <!--- TODO: change the if of this div: "#order-details1"---->
-                                                            <div class="row pt-3 ps-3">
-                                                                <div class="col-lg-3 ps-5" id="qrcode_container">
-                                                                    <h5 class="card-title">QR Code:</h5>
-                                                                    <script>
-                                                                        new QRCode(document.getElementById("qrcode_container"), "428377272847372");
-                                                                    </script>
-                                                                </div>
-                                                                <div class="col-lg-9 ps-5">
-                                                                    <h5 class="card-title">Order Details:</h5>
-                                                                    <!------TODO: change 'Presidential suite' according to the room tye in the order----->
+                                $guests_member = "";
 
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label ">Check-in Date</div>
-                                                                        <div class="col-lg-9 col-md-8">some day</div>
-                                                                    </div>
+                                foreach ($partners_info as $partner_info){
+                                    $name = $partner_info['NAME'];
+                                    $id_no = $partner_info['ID_NO'];
+                                    $guests_member = $guests_member."<div class=\"col-lg-9 col-md-8\">$name $id_no</div>\n";
+                                }
 
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Duration</div>
-                                                                        <div class="col-lg-9 col-md-8">10 days</div>
-                                                                    </div>
+                                $sql= "SELECT `IMAGE_DIR` FROM `ROOM_TYPE` WHERE `TYPE`='".mysqli_real_escape_string($conn, $room_type)."';";
+                                $result = mysqli_query($conn, $sql);
+                                $pic_file = 'logo.png';
+                                if ($result && mysqli_num_rows($result) > 0){
+                                    $pic_file = mysqli_fetch_assoc($result)['IMAGE_DIR'];
+                                }
 
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Amount</div>
-                                                                        <div class="col-lg-9 col-md-8">998</div>
-                                                                    </div>
+                                echo <<< EOF
+                                    <div class="accordion-item">
+                                          
+                                          <h2 class="accordion-header" id="flush-heading$count1">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse$count1"  aria-controls="flush-collapse$count1">
+                                              Order ID: $res_id $cancelled
+                                            </button>
+                                          </h2>
+                                          
+                                          <div id="flush-collapse$count1" class="accordion-collapse collapse $show" aria-labelledby="flush-heading$count1">
+                                            <div class="row accordion-body">
+                                                <div class="col-lg">
+                                                      <div class=" fade show active profile-overview" id="order-details1">
 
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Status</div>
-                                                                        <div class="col-lg-9 col-md-8">Booked</div>
-                                                                    </div>
+                                                        <div class="row pt-3 ps-3">
+                                                            <br>
+                                                          <div class="col-lg-3 pt-3">
+                                                              <img src="assets/img/$pic_file" class="card-img-top" alt="...">
+                                                          </div>
 
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Guest Members</div>
-                                                                        <div class="col-lg-9 col-md-8">
-                                                                            <div class="col-lg-9 col-md-8">Booked</div>
-                                                                            <div class="col-lg-9 col-md-8">Booked</div>
-                                                                            <div class="col-lg-9 col-md-8">Booked</div>
-                                                                            <div class="col-lg-9 col-md-8">Booked</div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <br>
-                                                                    <div class="row mb-3">
-                                                                        <label class="col-sm-2 col-form-label"> </label>
-                                                                        <div class="col-sm-10">
-                                                                            <button type="submit" class="btn btn-outline-danger">Cancel</button>
-                                                                        </div>
-                                                                    </div>
-
-
-                                                                </div>
+                                                          <div class="col-lg-5 ps-5">
+                                                            <h5 class="card-title">Order Details:</h5>
+                                                            
+                                                            <div class="row">
+                                                              <div class="col-lg-3 col-md-4 label ">Room Type</div>
+                                                              <div class="col-lg-9 col-md-8">$room_type</div>
                                                             </div>
 
-                                                        </div>
-
-
-                                                        <div class="tab-pane fade profile-edit pt-3 ps-3" id="order-edit1">
-                                                            <!--- TODO: change the if of this div: "#order-details1"---->
-
-                                                            <!-----Start of Reservation part------->
-                                                            <div class="col-lg">
-
-                                                                <!-- General Form Elements -->
-                                                                <form>
-                                                                    <div class="row mb-3">
-                                                                        <label for="inputDate" class="col-sm-2 col-form-label">Check in</label>
-                                                                        <div class="col-sm-10">
-                                                                            <input type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label for="inputDate" class="col-sm-2 col-form-label">Check out</label>
-                                                                        <div class="col-sm-10">
-                                                                            <input type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label class="col-sm-2 col-form-label">Room Type</label>
-                                                                        <div class="col-sm-10">
-                                                                            <select class="form-select" aria-label="Default select example">
-                                                                                <option selected>Select room type</option>
-                                                                                <option value="1">Presidential Suite</option>
-                                                                                <option value="2">Royal Suite</option>
-                                                                                <option value="3">Deluxe Suite</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label class="col-sm-2 col-form-label"> </label>
-                                                                        <div class="col-sm-10">
-                                                                            <button type="submit" class="btn btn-primary">Confirm modification</button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </form><!-- End General Form Elements -->
-
+                                                            <div class="row">
+                                                              <div class="col-lg-3 col-md-4 label ">Check in date</div>
+                                                              <div class="col-lg-9 col-md-8">$check_in</div>
                                                             </div>
-                                                            <!-----End of Reservation----->
 
+                                                            <div class="row">
+                                                              <div class="col-lg-3 col-md-4 label">Occupancy Days</div>
+                                                              <div class="col-lg-9 col-md-8">$duration</div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                              <div class="col-lg-3 col-md-4 label">Amount</div>
+                                                              <div class="col-lg-9 col-md-8">$$amt</div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                              <div class="col-lg-3 col-md-4 label">Guests Members</div>
+                                                              <div class="col-lg-9 col-md-8">
+                                                                    $guests_member
+                                                              </div>
+                                                            </div>
+
+                                                            
+                                                            <br>
+                                                            <div id="insert$count1"></div>
+                                                            
+
+                                                          </div>
+                                                          
+                                                          <div class="col-lg-3 ps-5" id="qrcode_container$count1">
+                                                              <h5 class="card-title">QR Code:</h5>
+                                                                <script>
+                                                                    new QRCode(document.getElementById("qrcode_container$count1"), "$res_id");
+                                                                </script>
+                                                          </div>
+                                                         
                                                         </div>
-
-                                                    </div><!-- End Bordered Tabs -->
-
-                                                </div>
+                                                        <div class="row mb-3">
+                                                            <label class="col-sm-5 col-form-label"> </label>
+                                                            <div class="col-sm-2">
+                                                                 <button id="cancel_btn$count1" class="btn btn-outline-danger" $disabled>Cancel</button>
+                                                            </div>
+                                                            <label class="col-sm-5 col-form-label"> </label>
+                                                        </div>
+                                                        
+                                                        <script>
+                                                            document.getElementById("cancel_btn$count1").onclick = function () {
+                                                                return cancel_order("$res_id", "insert$count1");
+                                                            }
+                                                        </script>
+                                                </div>  
                                             </div>
+                                          </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                EOF;
+                            }
+                            mysqli_close($conn);
 
-
-
-
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="flush-headingTwo">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                        Order 2
-                                    </button>
-                                </h2>
-                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                    <div class="row">
-                                        <div class="col-lg">
-                                            <div class="card">
-                                                <div class="card-body pt-3">
-                                                    <!-- Bordered Tabs -->
-                                                    <ul class="nav nav-tabs nav-tabs-bordered">
-
-                                                        <li class="nav-item">
-                                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#order-details2">Order Details</button>
-                                                        </li>
-
-                                                        <li class="nav-item">
-                                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#order-edit2">Edit Order</button>
-                                                        </li>
-
-                                                    </ul>
-                                                    <div class="tab-content pt-2">
-
-                                                        <div class="tab-pane fade show active profile-overview" id="order-details2">
-                                                            <div class="row pt-3 ps-3">
-                                                                <div class="col-lg-3 pt-3">
-                                                                    <img src="assets/img/card.jpg" class="card-img-top" alt="...">
-                                                                </div>
-                                                                <div class="col-lg-9 ps-5">
-                                                                    <h5 class="card-title">Presidential Suite</h5>
-                                                                    <!------TODO: change 'Presidential suite' according to the room tye in the order----->
-
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label ">Check in date</div>
-                                                                        <div class="col-lg-9 col-md-8">some day</div>
-                                                                    </div>
-
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Check out date</div>
-                                                                        <div class="col-lg-9 col-md-8">some day</div>
-                                                                    </div>
-
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Amount</div>
-                                                                        <div class="col-lg-9 col-md-8">998</div>
-                                                                    </div>
-
-                                                                    <div class="row">
-                                                                        <div class="col-lg-3 col-md-4 label">Status</div>
-                                                                        <div class="col-lg-9 col-md-8">Booked</div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-
-                                                        <div class="tab-pane fade profile-edit pt-3 ps-3" id="order-edit2">
-
-                                                            <!-----Start of Reservation part------->
-                                                            <div class="col-lg">
-
-                                                                <!-- General Form Elements -->
-                                                                <form>
-                                                                    <div class="row mb-3">
-                                                                        <label for="inputDate" class="col-sm-2 col-form-label">Check in</label>
-                                                                        <div class="col-sm-10">
-                                                                            <input type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label for="inputDate" class="col-sm-2 col-form-label">Check out</label>
-                                                                        <div class="col-sm-10">
-                                                                            <input type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label class="col-sm-2 col-form-label">Room Type</label>
-                                                                        <div class="col-sm-10">
-                                                                            <select class="form-select" aria-label="Default select example">
-                                                                                <option selected>Select room type</option>
-                                                                                <option value="1">Presidential Suite</option>
-                                                                                <option value="2">Royal Suite</option>
-                                                                                <option value="3">Deluxe Suite</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row mb-3">
-                                                                        <label class="col-sm-2 col-form-label"> </label>
-                                                                        <div class="col-sm-10">
-                                                                            <button type="submit" class="btn btn-primary">Confirm modification</button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </form><!-- End General Form Elements -->
-
-                                                            </div>
-                                                            <!-----End of Reservation----->
-
-                                                        </div>
-
-                                                    </div><!-- End Bordered Tabs -->
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                                ?>
 
 
                     </div>
@@ -445,6 +342,33 @@ $user = $_SESSION['user'];
 
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
+<script src="assets/js/tool_functions.js"></script>
+<script src="assets/jquery/jquery-3.6.0.min.js"></script>
+<script>
+    function cancel_order(order_id, alert_id){
+        $.ajax({
+            url: 'index.php?del_order',
+            type : "POST",
+            dataType : 'json',
+            data : {
+                res_id: order_id
+            },
+            success: function(results) {
+                console.log(results);
+                if (results.status === 1){
+                    window.location.replace("index.php?order");
+                }
+                else{
+                    customAlert(results.msg, alert_id);
+                }
+            },
+            error: function() {
+                customAlert("Oops! Request failed! Please check your Internet Connection.", alert_id);
+            }
+        });
+        return false;
+    }
+</script>
 
 </body>
 

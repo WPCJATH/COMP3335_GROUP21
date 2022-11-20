@@ -237,11 +237,7 @@ $user = $_SESSION['user'];
             $sql = "select * from `ROOM_TYPE`;";
             $result = mysqli_query($conn, $sql);
             $count = 0;
-            if(!$result){
-                header("Location: index.php?404_page_not_found");
-                exit;
-            }
-            if (mysqli_num_rows($result) > 0) {
+            if (!$result || mysqli_num_rows($result) > 0) {
                 while($row = mysqli_fetch_assoc($result)){
                     $room_info[$count++] = $row;
                 }

@@ -46,6 +46,9 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case "new_reservation":
                 require_once "./new_reservation.php";
                 break;
+            case "del_order":
+                require_once "./del_order.php";
+                break;
             case 'delete_profile':
                 require_once "./delete_profile.php";
                 break;
