@@ -168,13 +168,13 @@ function  send_json($status, string $msg=''){
 
 /**
  * Generate a random string based on the length
- * @param $length
+ * @param int $length
  *          The length of the random string
  * @return string
  *          The random string
  */
-function random_id($length = 18): string{
-    $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function random_id(int $length = 18): string{
+    $str = '0123456789';
     $len = strlen($str)-1;
     $rand_str = '';
     for ($i=0;$i<$length;$i++) {

@@ -25,10 +25,10 @@ if (!isset($data['gender'])){
     exit;
 }
 $gender = $data['gender'];
-if ($gender == 0 || $gender === 'male'){
+if ($gender == 0 || $gender === 'Male'){
     $gender = "female";
 }
-elseif ($gender == 1 || $gender === 'female'){
+elseif ($gender == 1 || $gender === 'Female'){
     $gender = 'male';
 }
 else{

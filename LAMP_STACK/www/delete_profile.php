@@ -8,12 +8,18 @@ if (!isset($data['cus_id']) || strlen($data['cus_id']===0)){
     exit();
 }
 
+
 /*
  * Connect to database
  */
 include_once "./lib/config.php";
 $config_ = get_config();
 $user_info = get_user_info();
+
+if ($data['cus_id'] === $user_info['user']){
+    send_json(1);
+}
+
 error_reporting(0);
 mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'], $user_info['pass'], $config_['mysql_info']['database']);

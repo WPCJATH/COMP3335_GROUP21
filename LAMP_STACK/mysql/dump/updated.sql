@@ -1,72 +1,90 @@
-CREATE DATABASE IF NOT EXISTS `hotel`;
+CREATE DATABASE `hotel`;
 USE `hotel`;
 
 CREATE TABLE `CUSTOMER` (
-`CUS_ID` VARCHAR(20) NOT NULL,
-`NAME` VARCHAR(30) ,
-`GENDER` ENUM('male', 'female') ,
-`AGE` INT ,
-`ID_NO` VARCHAR(18) ,
-`EMAIL` VARCHAR(50) NOT NULL,
-`PHONE_NO` VARCHAR(15) ,
-PRIMARY KEY (`CUS_ID`)
+                            `CUS_ID` VARCHAR(20) NOT NULL,
+                            `NAME` VARCHAR(30) ,
+                            `GENDER` ENUM('Male', 'Female') ,
+                            `AGE` INT ,
+                            `ID_NO` VARCHAR(18) ,
+                            `EMAIL` VARCHAR(50) NOT NULL,
+                            `PHONE_NO` VARCHAR(15) ,
+                            PRIMARY KEY (`CUS_ID`)
 );
 
 CREATE TABLE `ROOM_TYPE` (
-`TYPE` VARCHAR(20) NOT NULL,
-`PRICE` FLOAT NOT NULL,
-`IMAGE_DIR` VARCHAR(50) NOT NULL,
-`CAPACITY` INT NOT NULL,
-PRIMARY KEY (`TYPE`)
+                             `TYPE` VARCHAR(20) NOT NULL,
+                             `PRICE` FLOAT NOT NULL,
+                             `IMAGE_DIR` VARCHAR(50) NOT NULL,
+                             `CAPACITY` INT NOT NULL,
+                             PRIMARY KEY (`TYPE`)
 );
 
 CREATE TABLE `ROOM` (
-`ROOM_NO` VARCHAR(4)  NOT NULL,
-`ROOM_TYPE` VARCHAR(20) NOT NULL,
-`OCCUPIED` BOOLEAN NOT NULL,
-`IS_CLEAN` BOOLEAN NOT NULL,
-PRIMARY KEY (`ROOM_NO`),
-FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`)
+                        `ROOM_NO` VARCHAR(4)  NOT NULL,
+                        `ROOM_TYPE` VARCHAR(20) NOT NULL,
+                        `OCCUPIED` BOOLEAN NOT NULL,
+                        `IS_CLEAN` BOOLEAN NOT NULL,
+                        PRIMARY KEY (`ROOM_NO`),
+                        FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`)
 );
 
 CREATE TABLE `STAFF` (
-`STAFF_ID` VARCHAR(20) NOT NULL,
-`POSITION` ENUM('FD', 'MA', 'CL') NOT NULL,
-`RESPONSIBLE_FLOOR` INT,
-PRIMARY KEY (`STAFF_ID`)
+                         `STAFF_ID` VARCHAR(20) NOT NULL,
+                         `POSITION` ENUM('FD', 'MA', 'CL') NOT NULL,
+                         `RESPONSIBLE_FLOOR` INT,
+                         PRIMARY KEY (`STAFF_ID`)
 );
 
 CREATE TABLE `RESERVATION` (
-`RES_ID` BIGINT NOT NULL,
-`CUS_ID` VARCHAR(20) NOT NULL,
-`ROOM_NUMBER` VARCHAR(4) ,
-`CHECKIN_DATE` DATETIME NOT NULL,
-`DURATION` INT NOT NULL,
-`ROOM_TYPE` VARCHAR(20) NOT NULL,
-`CANCELLED` BOOLEAN NOT NULL,
-`AMT` INT NOT NULL,
-`IS_ORDER` BOOLEAN NOT NULL,
-RESPONSE VARCHAR(10),
-PRIMARY KEY (`RES_ID`),
-FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`),
-FOREIGN KEY (RESPONSE) REFERENCES `STAFF`(`STAFF_ID`),
-FOREIGN KEY (`CUS_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
+                               `RES_ID` VARCHAR(20) NOT NULL,
+                               `CUS_ID` VARCHAR(20) NOT NULL,
+                               `ROOM_NUMBER` VARCHAR(4) ,
+                               `CHECKIN_DATE` DATETIME NOT NULL,
+                               `DURATION` INT NOT NULL,
+                               `ROOM_TYPE` VARCHAR(20) NOT NULL,
+                               `CANCELLED` BOOLEAN NOT NULL,
+                               `AMT` INT NOT NULL,
+                               `IS_ORDER` BOOLEAN NOT NULL,
+                               `RESPONSE` VARCHAR(10),
+                               PRIMARY KEY (`RES_ID`),
+                               FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`),
+                               FOREIGN KEY (`RESPONSE`) REFERENCES `STAFF`(`STAFF_ID`),
+                               FOREIGN KEY (`CUS_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
 );
 
 CREATE TABLE `TRAVEL_PARTNER` (
-`PARTNER_ID` VARCHAR(20) NOT NULL,
-`HOLDER` VARCHAR(20) NOT NULL,
-FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`),
-FOREIGN KEY (`HOLDER`) REFERENCES `CUSTOMER`(`CUS_ID`)
+                                  `PARTNER_ID` VARCHAR(20) NOT NULL,
+                                  `HOLDER` VARCHAR(20) NOT NULL,
+                                  FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`),
+                                  FOREIGN KEY (`HOLDER`) REFERENCES `CUSTOMER`(`CUS_ID`)
 );
 
 CREATE TABLE `TRAVEL_PARTNER_INORDER` (
-`RES_ID` BIGINT NOT NULL,
-`PARTNER_ID` VARCHAR(20) NOT NULL,
-FOREIGN KEY (`RES_ID`) REFERENCES `RESERVATION`(`RES_ID`),
-FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
+                                          `RES_ID` VARCHAR(20) NOT NULL,
+                                          `PARTNER_ID` VARCHAR(20) NOT NULL,
+                                          FOREIGN KEY (`RES_ID`) REFERENCES `RESERVATION`(`RES_ID`),
+                                          FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
 );
 
+
+
+
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Presidential Suite', 3000, 'room_type1.jpg', 4);
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Royal Suite', 2000, 'room_type2.jpg', 3);
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Deluxe Suite', 1000, 'room_type3.jpg', 2);
 
 
 INSERT INTO `ROOM_TYPE`
@@ -85,7 +103,7 @@ VALUES
 ('Deluxe Suite', 1000, 'room_type3.jpg', 2);
 
 
-USE `hotel`;
+
 
 INSERT INTO `ROOM`
 (`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)

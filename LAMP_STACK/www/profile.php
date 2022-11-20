@@ -245,8 +245,9 @@ $user = $_SESSION['user'];
                 $user_profiles[$count1++] = mysqli_fetch_assoc($result);
 
             foreach ($user_profiles[0] as $key => $value){
-                if (!isset($user_profiles[0][$key])){
-                    $count1--;
+                if ($user_profiles[0][$key]===NULL){
+                    $user_profiles = [];
+                    $count1=0;
                     break;
                 }
             }
@@ -286,8 +287,8 @@ $user = $_SESSION['user'];
 
                 $select = '
                                                     <option '.($gender===''? "selected": "").' value="">--select gender--</option>
-                                                    <option '.($gender==='female'? "selected": "").' value="0">Female</option>
-                                                    <option '.($gender==='male'? "selected": "").' value="1">Male</option>
+                                                    <option '.($gender==='Female'? "selected": "").' value="0">Female</option>
+                                                    <option '.($gender==='Male'? "selected": "").' value="1">Male</option>
 ';
 
                 echo <<< EOF
