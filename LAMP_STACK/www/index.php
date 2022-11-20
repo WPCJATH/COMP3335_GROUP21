@@ -74,11 +74,17 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                     case 'checkin':
                         require_once "./checkin.php";
                         break;
+                    case 'checkout':
+                        require_once "./checkout.php";
+                        break;
                     case 'update_checkin':
                         require_once "./update_checkin.php";
                         break;
+                    case 'update_checkout':
+                        require_once "./update_checkout.php";
+                        break;
                     case 'profile':
-                        require_once "./staff_profile.php";
+                        require_once "./fd_profile.php";
                         break;
                     default:
                         require_once './static/pages-error.html';
@@ -117,11 +123,14 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                     case 'clean_status':
                         require_once "./clean_status.php";
                         break;
+                    case "update_clean":
+                        require_once "./update_clean.php";
+                        break;
                     case 'logout':
                         require_once "./logout.php";
                         break;
                     case 'profile':
-                        require_once "./staff_profile.php";
+                        require_once "./cl_profile.php";
                         break;
                     default:
                         require_once './static/pages-error.html';

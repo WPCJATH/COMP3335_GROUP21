@@ -118,6 +118,13 @@ $user = $_SESSION['user'];
         </li><!-- End Room Cleaning Status Nav -->
 
         <li class="nav-item">
+            <a class="nav-link collapsed" href="index.php?checkout">
+                <i class="bi bi-house"></i>
+                <span>Check-Out</span>
+            </a>
+        </li><!-- End Room Cleaning Status Nav -->
+
+        <li class="nav-item">
             <a class="nav-link collapsed" href="index.php?profile">
                 <i class="bi bi-person"></i>
                 <span>Profile</span>
@@ -359,6 +366,7 @@ $user = $_SESSION['user'];
     }
 
     function update_checkin(json_data, alert_id){
+        alert("In the real scenarios, the front-desk should scan the ID card of the customer to ensure the identity, here we skip this step.");
         $.ajax({
             url: 'index.php?update_checkin',
             type : "POST",

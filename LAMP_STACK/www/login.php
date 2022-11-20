@@ -29,12 +29,15 @@ if (!$conn){
     exit;
 }
 
-$sql = "SELECT `POSITION` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
+$sql = "SELECT `POSITION`, `RESPONSIBLE_FLOOR` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
 $result = mysqli_query($conn, $sql);
 
+$floor = 'N/A';
 $role = "customer";
 if ($result && mysqli_num_rows($result) > 0){
-    $role = mysqli_fetch_assoc($result)['POSITION'];
+    $row = mysqli_fetch_assoc($result);
+    $role = $row['POSITION'];
+    $floor = $row['RESPONSIBLE_FLOOR'];
 }
 
 mysqli_close($conn);
@@ -43,6 +46,7 @@ $info = [
     'user' => $user,
     'pass' => $pass,
     'role' => $role,
+    'floor' => $floor,
     'expire' => time() +$config_['life_time']
 ];
 

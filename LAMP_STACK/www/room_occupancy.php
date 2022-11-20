@@ -119,6 +119,13 @@ $user = $_SESSION['user'];
         </li><!-- End Room Cleaning Status Nav -->
 
         <li class="nav-item">
+            <a class="nav-link collapsed" href="index.php?checkout">
+                <i class="bi bi-house"></i>
+                <span>Check-Out</span>
+            </a>
+        </li><!-- End Room Cleaning Status Nav -->
+
+        <li class="nav-item">
             <a class="nav-link collapsed" href="index.php?profile">
                 <i class="bi bi-person"></i>
                 <span>Profile</span>

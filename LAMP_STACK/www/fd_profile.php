@@ -2,6 +2,8 @@
 require_once './lib/toolfuctions.php';
 header_check();
 $user = $_SESSION['user'];
+$info = get_user_info();
+$role = $info['role'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,6 +121,13 @@ $user = $_SESSION['user'];
         </li><!-- End Room Cleaning Status Nav -->
 
         <li class="nav-item">
+            <a class="nav-link collapsed" href="index.php?checkout">
+                <i class="bi bi-house"></i>
+                <span>Check-Out</span>
+            </a>
+        </li><!-- End Room Cleaning Status Nav -->
+
+        <li class="nav-item">
             <a class="nav-link " href="index.php?profile">
                 <i class="bi bi-person"></i>
                 <span>Profile</span>
@@ -161,7 +170,12 @@ $user = $_SESSION['user'];
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Position</div>
-                                <div class="col-lg-9 col-md-8">Front Desk</div>
+                                <div class="col-lg-9 col-md-8"><?php echo $role;?></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Responsible Floor</div>
+                                <div class="col-lg-9 col-md-8">N/A</div>
                             </div>
 
                         </div>
