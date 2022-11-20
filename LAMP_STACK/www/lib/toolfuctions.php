@@ -45,16 +45,17 @@ function header_check(){
  * Check whether the user has signed in and whether the signin expired.
  * AES encryption is used to protect the user's expire time and password on the server.
  * Called by pages that require checking the signin status of user.
- * @return bool true -> user signed in & not expired; false -> otherwise
+ * @return string|bool  role -> user signed in & not expired; false -> otherwise
+ *      Role is to determine the user's identity, i.e., one of customer, front-desk, manager, and cleaner
  */
-function session_update(): bool{
+function session_update(){
     if (isset($_SESSION['info'])) {
         $info = aes_cipher_decrypt($_SESSION['info'], true);
         if (isset($info) && $info['expire'] > time()) {
             global $config_;
             $info['expire'] = time() + $config_['life_time'];
             $_SESSION['info'] = aes_cipher_encrypt($info, true);
-            return true;
+            return $info['role'];
         }
         log_out();
     }

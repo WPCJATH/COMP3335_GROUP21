@@ -29,11 +29,19 @@ if (!$conn){
     exit;
 }
 
+$sql = "SELECT `POSITION` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
+$result = mysqli_query($conn, $sql);
+$role = "customer";
+if ($result || !mysqli_num_rows($result) > 0){
+    $role = mysqli_fetch_assoc($result)['POSITION'];
+}
+
 mysqli_close($conn);
 
 $info = [
     'user' => $user,
     'pass' => $pass,
+    'role' => $role,
     'expire' => time() +$config_['life_time']
 ];
 
@@ -42,6 +50,5 @@ $_SESSION['user'] = $user;
 
 send_json(1);
 
-# header("Location: index.php?home");
 
 

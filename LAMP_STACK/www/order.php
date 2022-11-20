@@ -206,7 +206,7 @@ $user = $_SESSION['user'];
 
                                 $show = ($is_cancelled)? "":"show";
                                 $cancelled = ($is_cancelled)? "(Cancelled)":"";
-                                $disabled = ($is_order)? "disabled":"";
+                                $disabled = ($is_order || $is_cancelled)? "disabled":"";
                                 $expanded = ($is_cancelled);
 
                                 $guests_member = "";
@@ -282,7 +282,7 @@ $user = $_SESSION['user'];
                                                           </div>
                                                           
                                                           <div class="col-lg-3 ps-5" id="qrcode_container$count1">
-                                                              <h5 class="card-title">QR Code:</h5>
+                                                                <br>
                                                                 <script>
                                                                     new QRCode(document.getElementById("qrcode_container$count1"), "$res_id");
                                                                 </script>
