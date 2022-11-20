@@ -34,11 +34,17 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case 'logout':
                 require_once "./logout.php";
                 break;
+            case 'order':
+                require_once "./order.php";
+                break;
             case 'profile':
                 require_once "./profile.php";
                 break;
             case 'new_profile':
                 require_once "./new_profile.php";
+                break;
+            case "new_reservation":
+                require_once "./new_reservation.php";
                 break;
             case 'delete_profile':
                 require_once "./delete_profile.php";
@@ -57,6 +63,7 @@ if ($request_keywords && sizeof($request_keywords) > 0){
             case 'signup':
                 require_once "./signup.php";
                 break;
+            case 'logout':
             case 'home':
                 require_once "./home_unsigned.php";
                 break;

@@ -40,21 +40,85 @@ $user = $_SESSION['user'];
     * Author: BootstrapMade.com
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
+    <!-- Template Main JS File -->
+    <!-- Vendor JS Files -->
 
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.min.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.min.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/tool_functions.js"></script>
     <script>
-        Date.prototype.toDateInputValue = (function() {
-            let local = new Date(this);
-            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        function toDateInputValue(recorded_date){
+            let local = new Date();
+            if (recorded_date!==""){
+                let recorded = new Date(recorded_date);
+                if (local <= recorded)
+                    local = recorded;
+            }
             return local.toJSON().slice(0,10);
-        });
+        }
 
         function date_onchange(element){
             let date = new Date(element.value);
             if (date < new Date()){
+                element.classList.add("is-invalid");
+                return false;
+            }
+            else{
+                element.classList.remove("is-invalid");
+            }
+            return true;
+        }
 
+        function check_box_check(limit, name){
+            let checkboxes = document.getElementsByName(name);
+            let cur = 0;
+            checkboxes.forEach(function (item){
+                if (item.checked){
+                    cur++;
+                    if (cur > limit){
+                        item.checked = false;
+                        cur--;
+                    }
+                }
+            })
+            if (cur >= limit){
+                checkboxes.forEach(function (item){
+                    if (!item.checked){
+                        item.disabled = true;
+                    }
+                })
+            }
+            else{
+                checkboxes.forEach(function (item){
+                    if (item.disabled){
+                        item.disabled = false;
+                    }
+                })
             }
         }
+
+        function get_selected_members(name){
+            let checkboxes = document.getElementsByName(name);
+            let checked = [];
+            checkboxes.forEach(function (item){
+                if (item.checked){
+                    checked.push(item.value);
+                }
+            })
+            return checked;
+        }
+
     </script>
+
 </head>
 
 <body>
@@ -169,6 +233,7 @@ $user = $_SESSION['user'];
             $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
                 $user_info['pass'], $config_['mysql_info']['database']);
 
+            // Get the room type information
             $sql = "select * from `ROOM_TYPE`;";
             $result = mysqli_query($conn, $sql);
             $count = 0;
@@ -181,6 +246,46 @@ $user = $_SESSION['user'];
                     $room_info[$count++] = $row;
                 }
             }
+
+            // Get the profile information related to the user
+            $sql = "SELECT * FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $user_info['user'])."';";
+            $result = mysqli_query($conn, $sql);
+            $count1 = 0;
+            $user_profiles = [];
+            if ($result && mysqli_num_rows($result) > 0)
+                $user_profiles[$count1++] = mysqli_fetch_assoc($result);
+
+            foreach ($user_profiles[0] as $key => $value){
+                if ($user_profiles[0][$key]===NULL){
+                    $user_profiles = [];
+                    $count1=0;
+                    break;
+                }
+            }
+
+
+            $sql = "SELECT `PARTNER_ID` FROM `TRAVEL_PARTNER` 
+                    WHERE `HOLDER`='".mysqli_real_escape_string($conn, $user_info['user'])."';";
+            $result = mysqli_query($conn, $sql);
+            $count2 = 0;
+            $partner_ids = [];
+            if ($result && mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)){
+                    $partner_ids[$count2++] = $row['PARTNER_ID'];
+                }
+            }
+
+            foreach ($partner_ids as $partner_id){
+                $sql = "SELECT * FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $partner_id)."';";
+                $result = mysqli_query($conn, $sql);
+                if(!$result || !mysqli_num_rows($result) > 0){
+                    continue;
+                }
+                $user_profiles[$count1++] = mysqli_fetch_assoc($result);
+            }
+
+
+
             mysqli_close($conn);
 
             usort($room_info, function($a, $b){
@@ -222,25 +327,25 @@ $user = $_SESSION['user'];
                                     <div class="card-body">
                                         <h5 class="card-title">Make a Reservation</h5>
                                         <!-- General Form Elements -->
-                                        <form>
+                                        <form id="reservation-form$count" class="needs-validation" novalidate>
                                             <div class="row mb-3">
                                                 <label for="inputDate$count" class="col-sm-2 col-form-label">Check In</label>
                                                 <div class="col-sm-10">
-                                                    <input id="inputDate$count" type="date" class="form-control">
-
+                                                    <input id="inputDate$count" type="date" class="form-control" " required>
+                                                    <div class="invalid-feedback">You must input date on or after today.</div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label for="duration" class="col-sm-2 col-form-label" >Occupancy Days</label>
                                                 <div class="col-sm-10">
-                                                    <input id="duration$count" type="number" class="form-control" min="1" value="1">
-
+                                                    <input id="duration$count" type="number" class="form-control" min="1" max="20" value="1" required>
+                                                    <div class="invalid-feedback">You must set a stay duration.</div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
                                                 <label class="col-sm-2 col-form-label">Guest Number</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-select" aria-label="Default select example">
+                                                    <select id="member_num$count" class="form-select" aria-label="Default select example" required>
                     EOF;
 
                 echo "<option selected value=$capacity>$capacity</option>";
@@ -249,42 +354,43 @@ $user = $_SESSION['user'];
 
                 echo <<< EOF
                                                     </select>
-                                                    <div class="invalid-feedback">Please enter your username.</div>
+                                                    
                                                 </div>
                                             </div>
-                                            
-                                            <div class="row mb-3">
+                                            <br>
+                                            <div class="row mb-3" id="insert$count">
                                               <label class="col-sm-2 col-form-label">Guest Members:</label>
-                                              <div class="row col-sm-8">
-                                                    <div class="form-check col-sm-5">
-                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" checked>
-                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
-                                                        <div class="invalid-feedback">You must agree before submitting.</div>
-                                                     </div>
-                                                     
-                                                     <div class="form-check col-sm-5">
-                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" >
-                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
-                                                        <div class="invalid-feedback">You must agree before submitting.</div>
-                                                     </div>
-                                                     
-                                                     <div class="form-check col-sm-5">
-                                                        <input class="form-check-input" name="terms" type="checkbox" value="" id="customer-$count-0" >
-                                                        <label class="form-check-label" for="customer-$count-0">WANG, ZHE 123455(0)</label>
-                                                        <div class="invalid-feedback">You must agree before submitting.</div>
-                                                     </div>
+                                              <div class="row col-sm-8" id="checkbox$count">
+                     EOF;
+
+                $count_ = 0;
+                foreach ($user_profiles as $profile){
+                    $cus_id = $profile['CUS_ID'];
+                    $cus_name = $profile['NAME'];
+                    $id_no = $profile['ID_NO'];
+                    echo <<< EOF
+                        <div class="form-check col-sm-5">
+                            <input class="form-check-input" value="$cus_id" name="members$count" type="checkbox"  id="customer-$count-$count_">
+                            <label class="form-check-label" for="customer-$count-$count_">$cus_name $id_no</label>
+                        </div>
+                    EOF;
+                    $count_++;
+                }
+
+
+                echo <<< EOF
                                               </div>
                                               <div class="form-check col-sm-2">
                                                    <a class="fs-6 btn btn-info" href="index.php?profile">Add New</a>
                                               </div>
                                               
                                             </div>
-
+                                            <br>
                                             
                                             <div class="row mb-3">
                                                 <label class="col-sm-2 col-form-label"> </label>
                                                 <div class="col-sm-10">
-                                                    <a  class="btn btn-primary" type="submit">Register</a>
+                                                    <a  id="submit_btn$count" class="btn btn-primary needs_validation_" type="submit">Register</a>
                                                 </div>
                                             </div>
                                         </form><!-- End General Form Elements -->
@@ -292,7 +398,55 @@ $user = $_SESSION['user'];
                                 </div>
                             </div>
                             <script>
-                                document.getElementById("inputDate$count").value=new Date().toDateInputValue();
+                                if (localStorage.getItem("inputDate$count"))
+                                     document.getElementById("inputDate$count").value= toDateInputValue(localStorage.getItem("inputDate$count"));
+                                else
+                                    document.getElementById("inputDate$count").value= toDateInputValue("");
+                                
+                                document.getElementById("inputDate$count").onchange = function (){
+                                    if (date_onchange(document.getElementById("inputDate$count")))
+                                        localStorage.setItem("inputDate$count", document.getElementById("inputDate$count").value);
+                                }
+
+                                if (localStorage.getItem("duration$count"))
+                                    document.getElementById("duration$count").value = localStorage.getItem("duration$count");
+                                
+                                document.getElementById("duration$count").onchange = function(){
+                                    localStorage.setItem("duration$count", document.getElementById("duration$count").value);
+                                } 
+
+                                
+                                document.getElementsByName("members$count").forEach(function (element){
+                                    element.onclick = function (){
+                                        check_box_check(parseInt(document.getElementById("member_num$count").value), "members$count");
+                                    }
+                                })
+                                
+                                document.getElementById("member_num$count").onchange = function(){
+                                    check_box_check(parseInt(document.getElementById("member_num$count").value), "members$count");
+                                }
+                                
+                                document.getElementById("submit_btn$count").onclick = function (){
+                                    let check_in = document.getElementById("inputDate$count").value;
+                                    let duration = document.getElementById("duration$count").value;
+                                    let member_num = document.getElementById("member_num$count").value;
+                                    let members = get_selected_members("members$count");
+                                    
+                                    if (parseInt(member_num)!==members.length){
+                                        customAlert("The guest number and selected guests are not match!", "insert$count");
+                                        return false;
+                                    }
+                                    
+                                    let json_data = '{' +
+                                    '"room_type" : "$id",' +
+                                    '"check_in" : "' + check_in + '",' +
+                                    '"duration" : "' + duration + '",' +
+                                    '"members" : ["' + members.join('","') + '"]' +
+                                    '}';
+                                    console.log(json_data);
+                                    return make_reservation(JSON.parse(json_data), "insert$count");
+                                }
+                                
                             </script>
                             <!-----End of Reservation----->        
                     EOF;
@@ -312,20 +466,30 @@ $user = $_SESSION['user'];
 
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-<!-- Vendor JS Files -->
-<script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="assets/vendor/chart.js/chart.min.js"></script>
-<script src="assets/vendor/echarts/echarts.min.js"></script>
-<script src="assets/vendor/quill/quill.min.js"></script>
-<script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-<script src="assets/vendor/tinymce/tinymce.min.js"></script>
-<script src="assets/vendor/php-email-form/validate.js"></script>
-
-<!-- Template Main JS File -->
-<script src="assets/js/main.js"></script>
-
-
+<script src="assets/jquery/jquery-3.6.0.min.js"></script>
+<script>
+    function make_reservation(json_data, alert_id){
+        $.ajax({
+            url: 'index.php?new_reservation',
+            type : "POST",
+            dataType : 'json',
+            data : json_data,
+            success: function(results) {
+                console.log(results);
+                if (results.status === 1){
+                    window.location.replace("index.php?order");
+                }
+                else{
+                    customAlert(results.msg, alert_id);
+                }
+            },
+            error: function() {
+                customAlert("Oops! Request failed! Please check your Internet Connection.", alert_id);
+            }
+        });
+        return false;
+    }
+</script>
 </body>
 
 </html>

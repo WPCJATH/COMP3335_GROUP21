@@ -38,7 +38,7 @@ $sql_ls[$idx++] = "DELETE FROM `CUSTOMER`
 
 for ($i=0; $i<$idx; $i++){
     if (!mysqli_query($conn, $sql_ls[$i])) {
-        send_json(0, "Register failed, please try later. $i");
+        send_json(0, "The member profile you want to delete is contained in an order, please delete the order beforehand.");
         mysqli_close($conn);
         exit;
     }
