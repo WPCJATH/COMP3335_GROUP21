@@ -20,8 +20,8 @@ $pass = $data['pass'];
 include_once "./lib/config.php";
 $config_ = get_config();
 
-error_reporting(0);
-mysqli_report(MYSQLI_REPORT_OFF);
+# error_reporting(0);
+# mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $user, $pass, $config_['mysql_info']['database']);
 
 if (!$conn){
@@ -45,7 +45,7 @@ else{
         $floor = $row['RESPONSIBLE_FLOOR'];
     }
     else {
-        send_json(0);
+        send_json(0, mysqli_error($conn));
         mysqli_close($conn);
         exit;
     }

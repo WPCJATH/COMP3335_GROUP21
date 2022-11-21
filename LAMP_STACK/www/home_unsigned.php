@@ -138,8 +138,8 @@ header_check();
                 include_once "./lib/config.php";
                 $config_ = get_config();
 
-                error_reporting(0);
-                mysqli_report(MYSQLI_REPORT_OFF);
+                # error_reporting(0);
+                # mysqli_report(MYSQLI_REPORT_OFF);
                 $conn = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
                     $config_['mysql_info']['computer_pass'], $config_['mysql_info']['database']);
 

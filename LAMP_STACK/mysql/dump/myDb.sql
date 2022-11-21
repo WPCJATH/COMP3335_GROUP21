@@ -1,13 +1,3 @@
--- -------------------------------------------------------------
--- TablePlus 5.1.0(468)
---
--- https://tableplus.com/
---
--- Database: hotel
--- Generation Time: 2022-11-20 18:30:47.1680
--- -------------------------------------------------------------
-
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -17,169 +7,666 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE DATABASE IF NOT EXISTS hotel;
-USE hotel;
+set global activate_all_roles_on_login = on;
 
+CREATE DATABASE IF NOT EXISTS `hotel`;
+USE `hotel`;
+
+
+DROP TABLE IF EXISTS `CUSTOMER`;
+DROP TABLE IF EXISTS `RESERVATION`;
+DROP TABLE IF EXISTS `ROOM`;
+DROP TABLE IF EXISTS `ROOM_TYPE`;
+DROP TABLE IF EXISTS `STAFF`;
+DROP TABLE IF EXISTS `TRAVEL_PARTNER`;
+DROP TABLE IF EXISTS `TRAVEL_PARTNER_INORDER`;
+
+
+CREATE TABLE `CUSTOMER` (
+                            `CUS_ID` VARCHAR(20) NOT NULL,
+                            `NAME` VARCHAR(30) ,
+                            `GENDER` ENUM('Male', 'Female') ,
+                            `AGE` INT ,
+                            `ID_NO` VARCHAR(18) ,
+                            `EMAIL` VARCHAR(50) NOT NULL,
+                            `PHONE_NO` VARCHAR(15) ,
+                            PRIMARY KEY (`CUS_ID`)
+);
+
+CREATE TABLE `ROOM_TYPE` (
+                             `TYPE` VARCHAR(20) NOT NULL,
+                             `PRICE` FLOAT NOT NULL,
+                             `IMAGE_DIR` VARCHAR(50) NOT NULL,
+                             `CAPACITY` INT NOT NULL,
+                             PRIMARY KEY (`TYPE`)
+);
+
+CREATE TABLE `ROOM` (
+                        `ROOM_NO` VARCHAR(4)  NOT NULL,
+                        `ROOM_TYPE` VARCHAR(20) NOT NULL,
+                        `OCCUPIED` BOOLEAN NOT NULL,
+                        `IS_CLEAN` BOOLEAN NOT NULL,
+                        PRIMARY KEY (`ROOM_NO`),
+                        FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`)
+);
+
+CREATE TABLE `STAFF` (
+                         `STAFF_ID` VARCHAR(20) NOT NULL,
+                         `POSITION` ENUM('FD', 'MA', 'CL') NOT NULL,
+                         `RESPONSIBLE_FLOOR` INT,
+                         PRIMARY KEY (`STAFF_ID`)
+);
+
+CREATE TABLE `RESERVATION` (
+                               `RES_ID` VARCHAR(20) NOT NULL,
+                               `CUS_ID` VARCHAR(20) NOT NULL,
+                               `ROOM_NUMBER` VARCHAR(4) ,
+                               `CHECKIN_DATE` DATETIME NOT NULL,
+                               `DURATION` INT NOT NULL,
+                               `ROOM_TYPE` VARCHAR(20) NOT NULL,
+                               `CANCELLED` BOOLEAN NOT NULL,
+                               `AMT` INT NOT NULL,
+                               `IS_ORDER` BOOLEAN NOT NULL,
+                               `RESPONSE` VARCHAR(10),
+                               PRIMARY KEY (`RES_ID`),
+                               FOREIGN KEY (`ROOM_TYPE`) REFERENCES `ROOM_TYPE`(`TYPE`),
+                               FOREIGN KEY (`RESPONSE`) REFERENCES `STAFF`(`STAFF_ID`),
+                               FOREIGN KEY (`CUS_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
+);
+
+CREATE TABLE `TRAVEL_PARTNER` (
+                                  `PARTNER_ID` VARCHAR(20) NOT NULL,
+                                  `HOLDER` VARCHAR(20) NOT NULL,
+                                  FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`),
+                                  FOREIGN KEY (`HOLDER`) REFERENCES `CUSTOMER`(`CUS_ID`)
+);
+
+CREATE TABLE `TRAVEL_PARTNER_INORDER` (
+                                          `RES_ID` VARCHAR(20) NOT NULL,
+                                          `PARTNER_ID` VARCHAR(20) NOT NULL,
+                                          FOREIGN KEY (`RES_ID`) REFERENCES `RESERVATION`(`RES_ID`),
+                                          FOREIGN KEY (`PARTNER_ID`) REFERENCES `CUSTOMER`(`CUS_ID`)
+);
+
+/*
 DROP VIEW IF EXISTS `CLs`;
-
-
-DROP TABLE IF EXISTS `customer`;
-CREATE TABLE `customer` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'first name',
-  `last_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'last name',
-  `gender` enum('male','female') NOT NULL,
-  `age` int NOT NULL,
-  `id_no` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'identification number',
-  `email` varchar(256) NOT NULL DEFAULT 'email',
-  `phone_no` varchar(256) NOT NULL DEFAULT 'phone number',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 DROP VIEW IF EXISTS `FDs`;
-
-
 DROP VIEW IF EXISTS `MAs`;
-
-
-DROP TABLE IF EXISTS `reservation`;
-CREATE TABLE `reservation` (
-  `res_id` bigint NOT NULL AUTO_INCREMENT,
-  `cus_id` bigint NOT NULL,
-  `room_number` bigint NOT NULL,
-  `checkin_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `duration` int NOT NULL DEFAULT '1',
-  `cancelled` tinyint(1) NOT NULL DEFAULT '0',
-  `amt` int NOT NULL,
-  `is_ordered` tinyint(1) NOT NULL DEFAULT '0',
-  `responce` bigint NOT NULL,
-  `room_type` bigint NOT NULL,
-  PRIMARY KEY (`res_id`),
-  KEY `cus_id` (`cus_id`),
-  KEY `room_number` (`room_number`),
-  KEY `response` (`responce`),
-  KEY `room_type` (`room_type`),
-  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`cus_id`) REFERENCES `customer` (`id`),
-  CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`room_number`) REFERENCES `room` (`id`),
-  CONSTRAINT `reservation_ibfk_3` FOREIGN KEY (`responce`) REFERENCES `staff` (`id`),
-  CONSTRAINT `reservation_ibfk_4` FOREIGN KEY (`room_type`) REFERENCES `room_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 DROP VIEW IF EXISTS `reservation_column_wise_privileges_cleaners`;
-
-
 DROP VIEW IF EXISTS `reservation_column_wise_privileges_fds_and_mas`;
 
+CREATE ALGORITHM =
+    UNDEFINED DEFINER = `root`@`%`
+    SQL SECURITY DEFINER VIEW `CLs`
+AS SELECT `STAFF`.`STAFF_ID` AS `STAFF_ID`,
+          `STAFF`.`POSITION` AS `POSITION`,
+          `STAFF`.`RESPONSIBLE_FLOOR` AS `RESPONSIBLE_FLOOR`
+   from `STAFF` where (`STAFF`.`position` = 'CL');
 
-DROP TABLE IF EXISTS `room`;
-CREATE TABLE `room` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `room_type` bigint NOT NULL,
-  `occupied` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `room_type` (`room_type`),
-  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`room_type`) REFERENCES `room_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `room_type`;
-CREATE TABLE `room_type` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `price` float NOT NULL DEFAULT '0',
-  `pic_dir` bigint NOT NULL,
-  `capacity` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE ALGORITHM=
+    UNDEFINED DEFINER=`root`@`%`
+    SQL SECURITY DEFINER VIEW `FDs`
+AS SELECT `STAFF`.`STAFF_ID` AS `STAFF_ID`,
+          `STAFF`.`POSITION` AS `POSITION`,
+          `STAFF`.`RESPONSIBLE_FLOOR` AS `RESPONSIBLE_FLOOR`
+   FROM `STAFF` WHERE (`STAFF`.`position` = 'FD');
 
-DROP TABLE IF EXISTS `staff`;
-CREATE TABLE `staff` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(256) NOT NULL DEFAULT 'first name',
-  `last_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'last name',
-  `position` enum('FD','MA','CL') NOT NULL,
-  `responsible_floor` int NOT NULL DEFAULT '0',
-  `is_clean` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `travel_partner`;
-CREATE TABLE `travel_partner` (
-  `id` bigint NOT NULL,
-  `partner_id` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `partner_id` (`partner_id`),
-  CONSTRAINT `travel_partner_ibfk_1` FOREIGN KEY (`id`) REFERENCES `customer` (`id`),
-  CONSTRAINT `travel_partner_ibfk_2` FOREIGN KEY (`partner_id`) REFERENCES `customer` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE ALGORITHM=
+    UNDEFINED DEFINER=`root`@`%`
+    SQL SECURITY DEFINER VIEW `MAs`
+AS SELECT `STAFF`.`STAFF_ID` AS `STAFF_ID`,
+          `STAFF`.`POSITION` AS `POSITION`,
+          `STAFF`.`RESPONSIBLE_FLOOR` AS `RESPONSIBLE_FLOOR`
+   FROM `STAFF` WHERE (`STAFF`.`position` = 'MA');
 
-INSERT INTO `customer` (`id`, `first_name`, `last_name`, `gender`, `age`, `id_no`, `email`, `phone_no`) VALUES
-(1, 'Yaohong', 'DING', 'male', 1, 'U76777432', 'alittlestory233@gmail.com', '123456789');
 
-INSERT INTO `reservation` (`res_id`, `cus_id`, `room_number`, `checkin_date`, `duration`, `cancelled`, `amt`, `is_ordered`, `responce`, `room_type`) VALUES
-(4, 1, 1, '2022-11-20 15:59:28', 2, 0, 0, 1, 1, 1),
-(5, 1, 1, '2022-11-20 15:59:28', 1, 1, 0, 1, 1, 1);
+CREATE ALGORITHM=
+    UNDEFINED DEFINER=`root`@`%`
+    SQL SECURITY DEFINER VIEW `reservation_column_wise_privileges_cleaners`
+AS select `CUSTOMER`.`CUS_ID` AS `CUS_ID`,
+          `CUSTOMER`.`GENDER` AS `GENDER`,
+          `RESERVATION`.`ROOM_NUMBER` AS `ROOM_NUMBER`,
+          `RESERVATION`.`ROOM_TYPE` AS `ROOM_TYPE`,
+          `RESERVATION`.`CHECKIN_DATE` AS `CHECKIN_DATE`,
+          `RESERVATION`.`DURATION` AS `DURATION`,
+          `RESERVATION`.`CANCELLED` AS `CANCELLED`,
+          `RESERVATION`.`IS_ORDER` AS `IS_ORDER`,
+          `STAFF`.`STAFF_ID` AS `STAFF_ID`
+   FROM ((`reservation`
+       JOIN `CUSTOMER` ON ((`CUSTOMER`.`CUS_ID` = `RESERVATION`.`CUS_ID`)))
+       JOIN `STAFF` ON ((`STAFF`.`STAFF_ID` = `reservation`.`RESPONSE`)));
 
-INSERT INTO `room` (`id`, `room_type`, `occupied`) VALUES
-(1, 1, 0),
-(2, 1, 0);
 
-INSERT INTO `room_type` (`id`, `price`, `pic_dir`, `capacity`) VALUES
-(1, 400, 1, 2);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%`
+    SQL SECURITY DEFINER VIEW `reservation_column_wise_privileges_fds_and_mas`
+AS select `CUSTOMER`.`CUS_ID` AS `customer_first_name`,
+          `CUSTOMER`.`GENDER` AS `gender`,
+          `CUSTOMER`.`AGE` AS `AGE`,
+          `CUSTOMER`.`ID_NO` AS `ID_NO`,
+          `CUSTOMER`.`EMAIL` AS `EMAIL`,
+          `CUSTOMER`.`PHONE_NO` AS `PHONE_NO`,
+          `RESERVATION`.`ROOM_NUMBER` AS `ROOM_NUMBER`,
+          `RESERVATION`.`ROOM_TYPE` AS `ROOM_TYPE`,
+          `RESERVATION`.`CHECKIN_DATE` AS `CHECKIN_DATE`,
+          `RESERVATION`.`DURATION` AS `DURATION`,
+          `RESERVATION`.`CANCELLED` AS `CANCELLED`,
+          `RESERVATION`.`IS_ORDER` AS `IS_ORDER`,
+          `STAFF`.`STAFF_ID` AS `STAFF_ID`
+   from ((`RESERVATION`
+       join `CUSTOMER` on ((`CUSTOMER`.`CUS_ID` = `RESERVATION`.`CUS_ID`)))
+       join `STAFF` on((`STAFF`.`STAFF_ID` = `RESERVATION`.`RESPONSE`)));
 
-INSERT INTO `staff` (`id`, `first_name`, `last_name`, `position`, `responsible_floor`, `is_clean`) VALUES
-(1, 'Richard', 'DING', 'FD', 1, 1);
+*/
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `CLs` AS select `staff`.`id` AS `id`,`staff`.`first_name` AS `first_name`,`staff`.`last_name` AS `last_name`,`staff`.`position` AS `position`,`staff`.`responsible_floor` AS `responsible_floor`,`staff`.`is_clean` AS `is_clean` from `staff` where (`staff`.`position` = 'CL');
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `FDs` AS select `staff`.`id` AS `id`,`staff`.`first_name` AS `first_name`,`staff`.`last_name` AS `last_name`,`staff`.`position` AS `position`,`staff`.`responsible_floor` AS `responsible_floor`,`staff`.`is_clean` AS `is_clean` from `staff` where (`staff`.`position` = 'FD');
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `MAs` AS select `staff`.`id` AS `id`,`staff`.`first_name` AS `first_name`,`staff`.`last_name` AS `last_name`,`staff`.`position` AS `position`,`staff`.`responsible_floor` AS `responsible_floor`,`staff`.`is_clean` AS `is_clean` from `staff` where (`staff`.`position` = 'MA');
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `reservation_column_wise_privileges_cleaners` AS select `customer`.`first_name` AS `customer_first_name`,`customer`.`last_name` AS `customer_last_name`,`customer`.`gender` AS `gender`,`reservation`.`room_number` AS `room_number`,`reservation`.`room_type` AS `room_type`,`reservation`.`checkin_date` AS `checkin_date`,`reservation`.`duration` AS `duration`,`reservation`.`cancelled` AS `cancelled`,`reservation`.`is_ordered` AS `is_ordered`,`staff`.`first_name` AS `staff_first_name`,`staff`.`last_name` AS `staff_last_name` from ((`reservation` join `customer` on((`customer`.`id` = `reservation`.`cus_id`))) join `staff` on((`staff`.`id` = `reservation`.`responce`)));
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `reservation_column_wise_privileges_fds_and_mas` AS select `customer`.`first_name` AS `customer_first_name`,`customer`.`last_name` AS `customer_last_name`,`customer`.`gender` AS `gender`,`customer`.`age` AS `age`,`customer`.`id_no` AS `id_no`,`customer`.`email` AS `email`,`customer`.`phone_no` AS `phone_no`,`reservation`.`room_number` AS `room_number`,`reservation`.`room_type` AS `room_type`,`reservation`.`checkin_date` AS `checkin_date`,`reservation`.`duration` AS `duration`,`reservation`.`cancelled` AS `cancelled`,`reservation`.`is_ordered` AS `is_ordered`,`staff`.`first_name` AS `staff_first_name`,`staff`.`last_name` AS `staff_last_name` from ((`reservation` join `customer` on((`customer`.`id` = `reservation`.`cus_id`))) join `staff` on((`staff`.`id` = `reservation`.`responce`)));
+CREATE ROLE IF NOT EXISTS 'FRONT_DESK'@'localhost';
+CREATE ROLE IF NOT EXISTS 'MANAGER'@'%';
+CREATE ROLE IF NOT EXISTS 'CLEANER'@'localhost';
+CREATE ROLE IF NOT EXISTS 'CUSTOMER'@'%';
+CREATE USER IF NOT EXISTS 'computer'@'localhost' IDENTIFIED BY '12345678';
 
-CREATE ROLE 'front_desk';
-CREATE ROLE 'manager';
-CREATE ROLE 'cleaner';
-CREATE ROLE 'customer';
-CREATE ROLE 'server';
-
+/*
 -- connection required --
-GRANT CREATE SESSION TO 'front_desk';
-GRANT CREATE SESSION TO 'manager';
-GRANT CREATE SESSION TO 'cleaner';
-GRANT CREATE SESSION TO 'customer';
-GRANT CREATE SESSION TO 'server';
+GRANT CREATE SESSION TO 'FRONT_DESK';
+GRANT CREATE SESSION TO 'MANAGER';
+GRANT CREATE SESSION TO 'CLEANER';
+GRANT CREATE SESSION TO 'CUSTOMER';
+GRANT CREATE SESSION TO 'SERVER';
+*/
 
--- create user --
-GRANT CREATE USER ON *.* TO 'server'@'localhost' WITH GRANT option;
-GRANT CREATE USER ON *.* TO 'manager'@'%' WITH GRANT option;
+
+-- create global level privileges user --
+GRANT CREATE USER, RELOAD, GRANT OPTION ON *.* TO 'computer'@'localhost';
+GRANT SELECT ON mysql.user TO 'computer'@'localhost';
+GRANT CREATE USER, RELOAD, GRANT OPTION ON *.* TO 'MANAGER'@'%' WITH GRANT option;
+GRANT SELECT ON mysql.user TO 'MANAGER'@'%';
+
+-- reload --
+GRANT RELOAD ON *.* TO 'computer'@'localhost';
+GRANT RELOAD ON *.* TO 'MANAGER'@'%' WITH GRANT option;
+
 
 -- room type --
-GRANT SELECT ON hotel.room_type TO 'front_desk'@'localhost';
-GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.room_type TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.room_type TO 'cleaner'@'localhost';
-GRANT SELECT ON hotel.room_type TO 'customer'@'%';
-GRANT SELECT ON hotel.room_type TO 'server'@'localhost' WITH GRANT OPTION;
+GRANT SELECT ON hotel.ROOM_TYPE TO 'FRONT_DESK'@'localhost';
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.ROOM_TYPE TO 'MANAGER'@'%' WITH GRANT OPTION;
+GRANT SELECT ON hotel.ROOM_TYPE TO 'CLEANER'@'localhost';
+GRANT SELECT ON hotel.ROOM_TYPE TO 'CUSTOMER'@'%';
+GRANT SELECT ON hotel.ROOM_TYPE TO 'computer'@'localhost' WITH GRANT OPTION;
 
 -- staff --
-GRANT SELECT ON FDs TO 'front_desk'@'localhost';
-GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.staff TO 'manager'@'%' WITH GRANT OPTION;
+/*
+GRANT SELECT ON FDs TO 'FRONT_DESK'@'localhost';
+*/
+
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.STAFF TO 'MANAGER'@'%' WITH GRANT OPTION;
 
 -- room --
-GRANT SELECT ON hotel.room TO 'front_desk'@'localhost';
-GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.room TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.room TO 'cleaner'@'localhost';
-GRANT SELECT ON hotel.room TO 'customer'@'%';
-GRANT SELECT ON hotel.room TO 'server'@'localhost' WITH GRANT OPTION;
+GRANT SELECT ON hotel.ROOM TO 'FRONT_DESK'@'localhost';
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.ROOM TO 'MANAGER'@'%' WITH GRANT OPTION;
+GRANT SELECT ON hotel.ROOM TO 'CLEANER'@'localhost';
+GRANT SELECT ON hotel.ROOM TO 'CUSTOMER'@'%';
+GRANT SELECT ON hotel.ROOM TO 'computer'@'localhost' WITH GRANT OPTION;
 
 -- customer --
-GRANT SELECT, UPDATE ON hotel.customer TO 'front_desk'@'localhost';
-GRANT SELECT, INSERT ON hotel.customer TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.customer TO 'customer'@'%';
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.CUSTOMER TO 'computer'@'localhost' WITH GRANT OPTION ;
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.CUSTOMER TO 'CUSTOMER'@'%';
+
+-- travel_partner --
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.TRAVEL_PARTNER TO 'computer'@'localhost' WITH GRANT OPTION ;
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.TRAVEL_PARTNER TO 'CUSTOMER'@'%';
+
+-- travel_partner_inorder --
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.TRAVEL_PARTNER_INORDER TO 'computer'@'localhost' WITH GRANT OPTION ;
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.TRAVEL_PARTNER_INORDER TO 'CUSTOMER'@'%';
+
 
 -- reservation --
-GRANT SELECT, UPDATE ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'front_desk'@'localhost';
-GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.reservation_column_wise_privileges_cleaners TO 'cleaner'@'localhost';
-GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'customer'@'%';
+/*
+GRANT SELECT, UPDATE ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'FRONT_DESK'@'localhost';
+GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'MANAGER'@'%' WITH GRANT OPTION;
+GRANT SELECT ON hotel.reservation_column_wise_privileges_cleaners TO 'CLEANER'@'localhost';
+GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'CUSTOMER'@'%';
+*/
 
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.RESERVATION TO 'computer'@'localhost' WITH GRANT OPTION ;
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.RESERVATION TO 'CUSTOMER'@'%';
+GRANT SELECT ON hotel.RESERVATION TO 'FRONT_DESK'@'localhost';
+GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.RESERVATION TO 'MANAGER'@'%' WITH GRANT OPTION;
+
+
+
+-- Insert Values --
+
+-- Insert Some User --
+
+CREATE USER IF NOT EXISTS 'Alice'@'localhost' IDENTIFIED BY '12345678';
+CREATE USER IF NOT EXISTS 'Bob'@'localhost' IDENTIFIED BY '12345678';
+CREATE USER IF NOT EXISTS 'Chris'@'localhost' IDENTIFIED BY '12345678';
+CREATE USER IF NOT EXISTS 'David'@'%' IDENTIFIED BY '12345678';
+CREATE USER IF NOT EXISTS 'Ewing'@'%' IDENTIFIED BY '12345678';
+CREATE USER IF NOT EXISTS 'Frank'@'%' IDENTIFIED BY '12345678';
+
+-- Grant Roles --
+GRANT 'MANAGER'@'%' TO 'Alice'@'localhost';
+GRANT Create User, Grant Option, Reload ON *.* TO `Alice`@`localhost`;
+GRANT 'FRONT_DESK'@'localhost' TO 'Bob'@'localhost';
+GRANT 'CLEANER'@'localhost' TO 'Chris'@'localhost';
+GRANT 'CUSTOMER'@'%' TO 'David'@'%';
+GRANT 'CUSTOMER'@'%' TO 'Ewing'@'%';
+GRANT 'CUSTOMER'@'%' TO 'Frank'@'%';
+GRANT ALL ON hotel.* to 'Alice'@'localhost';
+GRANT ALL ON hotel.* to 'computer'@'localhost';
+
+Flush PRIVILEGES;
+
+-- Creating corresponding profiles --
+INSERT INTO  `CUSTOMER`
+(`CUS_ID`, `NAME`, `AGE`, `GENDER`, `ID_NO`, `EMAIL`, `PHONE_NO`)
+VALUES
+    ('David','David, Someone','21','Male','12345(7)','123@123.com','12345678');
+
+INSERT INTO  `CUSTOMER`
+(`CUS_ID`, `NAME`, `AGE`, `GENDER`, `ID_NO`, `EMAIL`, `PHONE_NO`)
+VALUES
+    ('Ewing','Ewing, Someone','22','Female','12345(3)','123123@123.com','32145678');
+
+INSERT INTO  `CUSTOMER`
+(`CUS_ID`, `NAME`, `AGE`, `GENDER`, `ID_NO`, `EMAIL`, `PHONE_NO`)
+VALUES
+    ('Frank','Frank, Someone','23','Male','12345(8)','123@123123.com','12347658');
+
+INSERT INTO `STAFF`
+(`STAFF_ID`, `POSITION`, `RESPONSIBLE_FLOOR`)
+VALUES
+    ('Alice','MA', -1);
+
+INSERT INTO `STAFF`
+(`STAFF_ID`, `POSITION`, `RESPONSIBLE_FLOOR`)
+VALUES
+    ('Bob','FD', -1);
+
+INSERT INTO `STAFF`
+(`STAFF_ID`, `POSITION`, `RESPONSIBLE_FLOOR`)
+VALUES
+    ('Chris','CL', 3);
+
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Presidential Suite', 3000, 'room_type1.jpg', 4);
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Royal Suite', 2000, 'room_type2.jpg', 3);
+
+INSERT INTO `ROOM_TYPE`
+(`TYPE` ,`PRICE`, `IMAGE_DIR`, `CAPACITY`)
+VALUES
+    ('Deluxe Suite', 1000, 'room_type3.jpg', 2);
+
+
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('100', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('101', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('102', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('103', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('104', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('105', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('106', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('107', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('108', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('109', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('200', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('201', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('202', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('203', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('204', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('205', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('206', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('207', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('208', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('209', 'Presidential Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('300', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('301', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('302', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('303', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('304', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('305', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('306', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('307', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('308', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('309', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('400', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('401', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('402', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('403', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('404', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('405', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('406', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('407', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('408', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('409', 'Royal Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('500', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('501', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('502', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('503', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('504', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('505', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('506', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('507', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('508', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('509', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('600', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('601', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('602', 'Deluxe Suite', 0, 1);
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('603', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('604', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('605', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('606', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('607', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('608', 'Deluxe Suite', 0, 1);
+
+
+INSERT INTO `ROOM`
+(`ROOM_NO`, `ROOM_TYPE`, `OCCUPIED`, `IS_CLEAN`)
+VALUES
+    ('609', 'Deluxe Suite', 0, 1);
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

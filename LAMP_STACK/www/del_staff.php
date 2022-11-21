@@ -17,8 +17,8 @@ $config_ = get_config();
 $user_info = get_user_info();
 
 
-error_reporting(0);
-mysqli_report(MYSQLI_REPORT_OFF);
+# error_reporting(0);
+# mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'], $user_info['pass'], $config_['mysql_info']['database']);
 if (!$conn){
     send_json(0, "Server interval error, please try later! ");
@@ -33,7 +33,7 @@ if ($user_info['user']===$staff_name){
 
 $sql = "DELETE FROM `STAFF` WHERE `STAFF_ID` = '".mysqli_real_escape_string($conn, $staff_name)."';";
 if (!mysqli_query($conn, $sql)){
-    send_json(0, "Server Interval Error. Please try again later. ");
+    send_json(0, "Server Interval Error. Please try again later. ".mysqli_error($conn));
     mysqli_close($conn);
     exit;
 }

@@ -97,12 +97,12 @@ VALUES (
          ".mysqli_real_escape_string($conn, 'NULL')."
         );";
 $sql_ls[$idx++] = "CREATE USER '".mysqli_real_escape_string($conn, $user)."'@'%' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
-$sql_ls[$idx++] = "GRANT ALL ON * To '".mysqli_real_escape_string($conn, $user)."'@'%';";
+$sql_ls[$idx++] = "GRANT SELECT, UPDATE, DELETE, INSERT ON * To '".mysqli_real_escape_string($conn, $user)."'@'%';";
 $sql_ls[$idx++] = "FLUSH PRIVILEGES;";
 
 for ($i=0; $i<$idx; $i++){
     if (!mysqli_query($conn, $sql_ls[$i])) {
-        send_json(0, "Register failed, please try later. ");
+        send_json(0, "Register failed, please try later. ".mysqli_error($conn));
         mysqli_close($conn);
         exit;
     }
