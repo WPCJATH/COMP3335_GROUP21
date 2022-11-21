@@ -35,3 +35,6 @@
 * Type `./install.sh`
 * A new container will show in your docker desktop. To access the monitor, To use the monitor, open your browser and enter `localhost:3301` (register required). It will monitor both HTTP requests and database requests.
 
+## Future works
+
+More updates will be address here https://github.com/WPCJATH/COMP3335_GROUP21
