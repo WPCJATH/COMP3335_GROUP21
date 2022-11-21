@@ -15,7 +15,7 @@
 
 
 ## DEMO Video
-[![Alternate Text](./images/demo.png)]({https://youtu.be/CWA3R_60B8s} "Link Title")
+[![Watch the video](./images/demo.png)](https://youtu.be/CWA3R_60B8s)
 
 ## How to run?
 
