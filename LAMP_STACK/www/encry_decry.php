@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html>
-<body>
-
 <?php
 function determine_param($ciphering) {
     $key_length = 16;
@@ -45,6 +41,3 @@ echo "encryption: " . $encryption_text . "\n";
 $decryption_text = openssl_decrypt($encryption_text, $ciphering, $key, $options, $iv);
 echo "decryption: " . $decryption_text . "\n";
 ?>
-
-</body>
-</html>
