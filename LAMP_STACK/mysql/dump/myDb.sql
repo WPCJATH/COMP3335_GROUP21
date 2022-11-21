@@ -148,36 +148,36 @@ GRANT CREATE SESSION TO 'customer';
 GRANT CREATE SESSION TO 'server';
 
 -- create user --
-GRANT CREATE USER ON *.* TO 'server' WITH GRANT option;
-GRANT CREATE USER ON *.* TO 'manager' WITH GRANT option;
+GRANT CREATE USER ON *.* TO 'server'@'localhost' WITH GRANT option;
+GRANT CREATE USER ON *.* TO 'manager'@'%' WITH GRANT option;
 
 -- room type --
-GRANT SELECT ON hotel.room_type TO 'front_desk'@'%';
+GRANT SELECT ON hotel.room_type TO 'front_desk'@'localhost';
 GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.room_type TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.room_type TO 'cleaner'@'%';
+GRANT SELECT ON hotel.room_type TO 'cleaner'@'localhost';
 GRANT SELECT ON hotel.room_type TO 'customer'@'%';
-GRANT SELECT ON hotel.room_type TO 'server'@'%' WITH GRANT OPTION;
+GRANT SELECT ON hotel.room_type TO 'server'@'localhost' WITH GRANT OPTION;
 
 -- staff --
-GRANT SELECT ON FDs TO 'front_desk'@'%';
+GRANT SELECT ON FDs TO 'front_desk'@'localhost';
 GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.staff TO 'manager'@'%' WITH GRANT OPTION;
 
 -- room --
-GRANT SELECT ON hotel.room TO 'front_desk'@'%';
+GRANT SELECT ON hotel.room TO 'front_desk'@'localhost';
 GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.room TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.room TO 'cleaner'@'%';
+GRANT SELECT ON hotel.room TO 'cleaner'@'localhost';
 GRANT SELECT ON hotel.room TO 'customer'@'%';
-GRANT SELECT ON hotel.room TO 'server'@'%' WITH GRANT OPTION;
+GRANT SELECT ON hotel.room TO 'server'@'localhost' WITH GRANT OPTION;
 
 -- customer --
-GRANT SELECT, UPDATE ON hotel.customer TO 'front_desk'@'%';
+GRANT SELECT, UPDATE ON hotel.customer TO 'front_desk'@'localhost';
 GRANT SELECT, INSERT ON hotel.customer TO 'manager'@'%' WITH GRANT OPTION;
 GRANT SELECT, UPDATE, INSERT, DELETE ON hotel.customer TO 'customer'@'%';
 
 -- reservation --
-GRANT SELECT, UPDATE ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'front_desk'@'%';
+GRANT SELECT, UPDATE ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'front_desk'@'localhost';
 GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'manager'@'%' WITH GRANT OPTION;
-GRANT SELECT ON hotel.reservation_column_wise_privileges_cleaners TO 'cleaner'@'%';
+GRANT SELECT ON hotel.reservation_column_wise_privileges_cleaners TO 'cleaner'@'localhost';
 GRANT SELECT, UPDATE, INSERT ON hotel.reservation_column_wise_privileges_fds_and_mas TO 'customer'@'%';
 
 
