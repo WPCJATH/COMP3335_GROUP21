@@ -156,7 +156,7 @@ if (mysqli_num_rows($result) > 0){
  * Insert the new order
  *
  */
-$reservation_id = date("Ymdhis", time()) . random_id(4);
+$reservation_id = date("YmdHis", time()) . random_id(4);
 
 $counter = 0;
 $sql_ls[$counter++] = "INSERT INTO `RESERVATION` (`RES_ID` ,`CUS_ID`,`ROOM_NUMBER` ,`CHECKIN_DATE`,

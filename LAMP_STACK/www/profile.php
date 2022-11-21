@@ -177,8 +177,9 @@ $user = $_SESSION['user'];
                                             <option value="0">Female</option>
                                             <option value="1">Male</option>
                                         </select>
+                                        <div class="invalid-feedback">Please choose a gender.</div>
                                     </div>
-                                    <div class="invalid-feedback">Please choose a gender.</div>
+
                                 </div>
 
                                 <div class="row mb-3">
@@ -232,8 +233,8 @@ $user = $_SESSION['user'];
             $config_ = get_config();
             $user_info = get_user_info();
 
-            # error_reporting(0);
-            # mysqli_report(MYSQLI_REPORT_OFF);
+            error_reporting(0);
+            mysqli_report(MYSQLI_REPORT_OFF);
             $conn = mysqli_connect($config_['mysql_info']['host'], $user_info['user'],
                 $user_info['pass'], $config_['mysql_info']['database']);
 
@@ -358,20 +359,21 @@ $user = $_SESSION['user'];
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="gender_new$count" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                            <label for="gender_update$count" class="col-md-4 col-lg-3 col-form-label">Gender</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <select id="gender_new$count" class="form-select" required aria-label="select example">
+                                                <select id="gender_update$count" class="form-select" required aria-label="select example">
                                                       $select
                                                 </select>
+                                                <div class="invalid-feedback">Please choose a gender.</div>
                                             </div>
-                                            <div class="invalid-feedback">Please choose a gender.</div>
+                                            
                                         </div>
 
                                         <div class="row mb-3">
                                             <label for="age_update$count" class="col-md-4 col-lg-3 col-form-label">Age</label>
                                             <div class="col-md-8 col-lg-9">
                                                 <input type="number" class="form-control" id="age_update$count" min="0" value="$age" required>
-                                                <div class="invalid-feedback">Please enter the name.</div>
+                                                <div class="invalid-feedback">Please enter the age.</div>
                                             </div>
                                         </div>
 
@@ -425,7 +427,7 @@ $user = $_SESSION['user'];
                         }
                         
                         let full_name = document.getElementById("name_update$count").value;
-                        let gender = document.getElementById("gender_new$count").value;
+                        let gender = document.getElementById("gender_update$count").value;
                         let age = document.getElementById("age_update$count").value;
                         let id = document.getElementById("id_update$count").value;
                         let phone = document.getElementById("phone_update$count").value;

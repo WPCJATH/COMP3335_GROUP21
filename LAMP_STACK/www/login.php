@@ -29,16 +29,29 @@ if (!$conn){
     exit;
 }
 
-$sql = "SELECT `POSITION`, `RESPONSIBLE_FLOOR` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
+$sql = "SELECT `CUS_ID` FROM `CUSTOMER` WHERE `CUS_ID`='".mysqli_real_escape_string($conn, $user)."';";
 $result = mysqli_query($conn, $sql);
-
-$floor = 'N/A';
-$role = "customer";
 if ($result && mysqli_num_rows($result) > 0){
-    $row = mysqli_fetch_assoc($result);
-    $role = $row['POSITION'];
-    $floor = $row['RESPONSIBLE_FLOOR'];
+    $floor = 'N/A';
+    $role = "customer";
 }
+else{
+    $sql = "SELECT `POSITION`, `RESPONSIBLE_FLOOR` FROM `STAFF` WHERE `STAFF_ID`='".mysqli_real_escape_string($conn, $user)."';";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0){
+        $row = mysqli_fetch_assoc($result);
+        $role = $row['POSITION'];
+        $floor = $row['RESPONSIBLE_FLOOR'];
+    }
+    else {
+        send_json(0);
+        mysqli_close($conn);
+        exit;
+    }
+}
+
+
 
 mysqli_close($conn);
 

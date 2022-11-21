@@ -98,7 +98,7 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         break;
                     case "home":
                     case 'room_occupancy':
-                        require_once "./room_occupancy.php";
+                        require_once "./manager_room.php";
                         break;
                     case 'logout':
                         require_once "./logout.php";
@@ -108,6 +108,12 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         break;
                     case "order":
                         require_once "./manager_order.php";
+                        break;
+                    case "new_profile":
+                        require_once "./new_staff.php";
+                        break;
+                    case "del_staff":
+                        require_once "./del_staff.php";
                         break;
                     default:
                         require_once './static/pages-error.html';

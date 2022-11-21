@@ -192,7 +192,7 @@ $user = $_SESSION['user'];
 
 
         usort($room_status, function($a, $b){
-            return intval(substr($a['RES_ID'], 0, 14)) > intval(substr($b['RES_ID'], 0, 14)) ? 1:-1;
+            return intval(substr($a['RES_ID'], 0, 14)) > intval(substr($b['RES_ID'], 0, 14)) ? -1:1;
         });
 
         $conn_computer = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
@@ -255,7 +255,7 @@ $user = $_SESSION['user'];
 
                         <div class="row">
                             <div class="col-lg-4 col-md-4 label">Amount</div>
-                            <div class="col-lg-6 col-md-8">$amt</div>
+                            <div class="col-lg-6 col-md-8">$$amt</div>
                         </div>
                         
                         <div class="row" id="insert$res_id">
