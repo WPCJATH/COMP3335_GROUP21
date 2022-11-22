@@ -114,14 +114,14 @@ if ($position==="MA"){
     $sql_ls[$idx++] = "SET DEFAULT ROLE $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'%';";
 }
 elseif ($position==="CL"){
-    $grant_statement = "'FRONT_DESK'@'$ip'";
+    $grant_statement = "'CLEANER'@'$ip'";
     $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
     $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip';";
 }
 else{
-    $grant_statement = "'CLEANER'@'$ip'";
-    $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'$ip' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
-    $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'$ip';";
+    $grant_statement = "'FRONT_DESK'@'$ip'";
+    $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
+    $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip';";
 }
 $sql_ls[$idx++] = "FLUSH PRIVILEGES;";
 $sql_ls[$idx++] = "INSERT INTO `STAFF`  (`STAFF_ID`, `POSITION`, `RESPONSIBLE_FLOOR`) VALUES (
