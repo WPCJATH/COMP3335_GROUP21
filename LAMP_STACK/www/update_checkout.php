@@ -33,7 +33,7 @@ mysqli_report(MYSQLI_REPORT_OFF);
 $conn = mysqli_connect($config_['mysql_info']['host'], $info['user'], $info['pass'], $config_['mysql_info']['database']);
 
 $sql = "UPDATE `RESERVATION` SET
-            `ROOM_NUMBER` = NULL,
+            `ROOM_NUMBER` = NULL
             WHERE `RES_ID` = '".mysqli_real_escape_string($conn, $res_id)."'
             AND `ROOM_NUMBER` = '".mysqli_real_escape_string($conn, $room_no)."';
             ";
@@ -44,7 +44,7 @@ if (!$result){
     exit;
 }
 
-$sql = "UPDATE `ROOM` SET `OCCUPIED`=false, `IS_CLEAN`=true WHERE `ROOM_NO`='".mysqli_real_escape_string($conn, $room_no)."'; ";
+$sql = "UPDATE `ROOM` SET `OCCUPIED`=false, `IS_CLEAN`=false WHERE `ROOM_NO`='".mysqli_real_escape_string($conn, $room_no)."'; ";
 $result = mysqli_query($conn, $sql);
 if (!$result){
     send_json(0, "Invalid Reservation ID or ROOM Number. ");
