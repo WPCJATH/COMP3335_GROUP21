@@ -104,22 +104,25 @@ if ( strlen($pass) < 8 || strlen($pass) > 12 ){
 }
 
 
-if ($position==="MA")
-    $grant_statement = "'MANAGER'@'%'";
-elseif ($position==="CL")
-    $grant_statement = "''FRONT_DESK'@'localhost''";
-else
-    $grant_statement = "'CLEANER'@'localhost'";
-
-mysqli_close($conn);
-$conn = mysqli_connect($config_['mysql_info']['host'], $config_['mysql_info']['computer_user'],
-    $config_['mysql_info']['computer_pass'], $config_['mysql_info']['database']);
+$ip = $config_['mysql_info']['ip'];
 
 $idx = 0;
-$sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'@'%' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
-$sql_ls[$idx++] = "GRANT SELECT, UPDATE, DELETE, INSERT ON * To '".mysqli_real_escape_string($conn, $staff_name)."'@'%' with grant option;";
-$sql_ls[$idx++] = "GRANT CREATE USER, RELOAD ON *.* To '".mysqli_real_escape_string($conn, $staff_name)."'@'%' with grant option;";
-$sql_ls[$idx++] = "GRANT SELECT ON mysql.user To '".mysqli_real_escape_string($conn, $staff_name)."'@'%' with grant option;";
+if ($position==="MA"){
+    $grant_statement = "'MANAGER'@'%'";
+    $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'@'%' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
+    $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'%';";
+    $sql_ls[$idx++] = "SET DEFAULT ROLE $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'%';";
+}
+elseif ($position==="CL"){
+    $grant_statement = "'FRONT_DESK'@'$ip'";
+    $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
+    $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'@'$ip';";
+}
+else{
+    $grant_statement = "'CLEANER'@'$ip'";
+    $sql_ls[$idx++] = "CREATE USER IF NOT EXISTS '".mysqli_real_escape_string($conn, $staff_name)."'$ip' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
+    $sql_ls[$idx++] = "GRANT $grant_statement To '".mysqli_real_escape_string($conn, $staff_name)."'$ip';";
+}
 $sql_ls[$idx++] = "FLUSH PRIVILEGES;";
 $sql_ls[$idx++] = "INSERT INTO `STAFF`  (`STAFF_ID`, `POSITION`, `RESPONSIBLE_FLOOR`) VALUES (
               '".mysqli_real_escape_string($conn, $staff_name)."',

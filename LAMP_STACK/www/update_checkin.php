@@ -43,6 +43,7 @@ if (!$result){
 $sql = "UPDATE `RESERVATION` SET
             `IS_ORDER` = true,
             `ROOM_NUMBER` = '".mysqli_real_escape_string($conn, $room_no)."',
+            `CHECKIN_DATE` = now(),
             `RESPONSE` = '".mysqli_real_escape_string($conn, $info['user'])."'
             WHERE `RES_ID` = '".mysqli_real_escape_string($conn, $res_id)."';
             ";

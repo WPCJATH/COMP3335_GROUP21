@@ -97,7 +97,7 @@ VALUES (
          ".mysqli_real_escape_string($conn, 'NULL')."
         );";
 $sql_ls[$idx++] = "CREATE USER '".mysqli_real_escape_string($conn, $user)."'@'%' IDENTIFIED BY '".mysqli_real_escape_string($conn, $pass)."';";
-$sql_ls[$idx++] = "GRANT SELECT, UPDATE, DELETE, INSERT ON * To '".mysqli_real_escape_string($conn, $user)."'@'%';";
+$sql_ls[$idx++] = "GRANT 'CUSTOMER'@'%' TO '".mysqli_real_escape_string($conn, $user)."'@'%';";
 $sql_ls[$idx++] = "FLUSH PRIVILEGES;";
 
 for ($i=0; $i<$idx; $i++){

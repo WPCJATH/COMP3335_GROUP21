@@ -33,7 +33,7 @@ $idx = 0;
 $sql_ls[$idx++] = "DELETE FROM `TRAVEL_PARTNER` WHERE `HOLDER` = '".mysqli_real_escape_string($conn, $user_info['user'])."'
         AND `PARTNER_ID` = '".mysqli_real_escape_string($conn, $data['cus_id'])."';";
 $sql_ls[$idx++] = "DELETE FROM `CUSTOMER` 
-        WHERE `CUS_ID` = '".mysqli_real_escape_string($conn, $user_info['user'])."';";
+        WHERE `CUS_ID` = '".mysqli_real_escape_string($conn, $data['cus_id'])."';";
 
 
 for ($i=0; $i<$idx; $i++){

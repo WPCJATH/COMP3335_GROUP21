@@ -10,6 +10,9 @@ services:
             - ./www:/var/www/html/
         depends_on:
                 - mysql
+        networks:
+            extnetwork:
+                ipv4_address: 172.19.0.10
 
     mysql:
         image: mysql
@@ -29,6 +32,9 @@ services:
             - ./mysql/dump:/docker-entrypoint-initdb.d
             - ./mysql/conf:/etc/mysql/conf.d
             - persistent:/var/lib/mysql
+        networks:
+            extnetwork:
+                ipv4_address: 172.19.0.11
 
 
     phpmyadmin:
@@ -44,6 +50,16 @@ services:
             PMA_PASSWORD: "test"
         depends_on:
             - mysql
+        networks:
+            extnetwork:
+                ipv4_address: 172.19.0.12
 
 volumes:
     persistent:
+
+networks:
+    extnetwork:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.19.0.0/24

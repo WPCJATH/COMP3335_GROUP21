@@ -14,7 +14,8 @@ function get_config(): array
         'read_raw_post' => false,
 
         'mysql_info' => [
-            'host' => 'localhost',
+            'host' => 'mysql',
+            'ip' => '172.19.0.10',
             'database' => 'hotel',
             'computer_user' => 'computer',
             'computer_pass' => '12345678',
