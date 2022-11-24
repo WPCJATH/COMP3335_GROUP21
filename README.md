@@ -81,7 +81,7 @@ TBD
 
 - Run the file `start.sh`
 
-Then,
+**Then,**
 - Use url https://localhost:8000 or http://localhost:8080 to access the system
 - Use url https://localhost:8001 or http://localhost:8081 to access the phpmyadmin via account `root` and password `test`
 - Use host `localhost` and port `33306` to access the database via account `root` and password `test`, the used schema is `hotel`
