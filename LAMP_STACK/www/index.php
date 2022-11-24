@@ -31,28 +31,28 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         header("Location: index.php?") ;
                         break;
                     case 'home':
-                        require_once "./home.php";
+                        require_once "./cus_home.php";
                         break;
                     case 'logout':
                         require_once "./logout.php";
                         break;
                     case 'order':
-                        require_once "./order.php";
+                        require_once "./cus_order.php";
                         break;
                     case 'profile':
-                        require_once "./profile.php";
+                        require_once "./cus_profile.php";
                         break;
                     case 'new_profile':
-                        require_once "./new_profile.php";
+                        require_once "./ma_new_profile.php";
                         break;
                     case "new_reservation":
-                        require_once "./new_reservation.php";
+                        require_once "./cus_new_order.php";
                         break;
                     case "del_order":
-                        require_once "./del_order.php";
+                        require_once "./cus_del_order.php";
                         break;
                     case 'delete_profile':
-                        require_once "./delete_profile.php";
+                        require_once "./cus_del_profile.php";
                         break;
                     default:
                         require_once './static/pages-error.html';
@@ -66,22 +66,22 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         break;
                     case "home":
                     case 'room_occupancy':
-                        require_once "./room_occupancy.php";
+                        require_once "./fd_room.php";
                         break;
                     case 'logout':
                         require_once "./logout.php";
                         break;
                     case 'checkin':
-                        require_once "./checkin.php";
+                        require_once "./fd_checkin.php";
                         break;
                     case 'checkout':
-                        require_once "./checkout.php";
+                        require_once "./fd_checkout.php";
                         break;
                     case 'update_checkin':
-                        require_once "./update_checkin.php";
+                        require_once "./fd_update_checkin.php";
                         break;
                     case 'update_checkout':
-                        require_once "./update_checkout.php";
+                        require_once "./fd_update_checkout.php";
                         break;
                     case 'profile':
                         require_once "./fd_profile.php";
@@ -98,22 +98,22 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         break;
                     case "home":
                     case 'room_occupancy':
-                        require_once "./manager_room.php";
+                        require_once "./ma_room.php";
                         break;
                     case 'logout':
                         require_once "./logout.php";
                         break;
                     case 'profile':
-                        require_once "./manager_profile.php";
+                        require_once "./ma_profile.php";
                         break;
                     case "order":
-                        require_once "./manager_order.php";
+                        require_once "./ma_order.php";
                         break;
                     case "new_profile":
-                        require_once "./new_staff.php";
+                        require_once "./ma_new_staff.php";
                         break;
                     case "del_staff":
-                        require_once "./del_staff.php";
+                        require_once "./ma_del_staff.php";
                         break;
                     default:
                         require_once './static/pages-error.html';
@@ -127,10 +127,10 @@ if ($request_keywords && sizeof($request_keywords) > 0){
                         break;
                     case "home":
                     case 'clean_status':
-                        require_once "./clean_status.php";
+                        require_once "./cl_room.php";
                         break;
                     case "update_clean":
-                        require_once "./update_clean.php";
+                        require_once "./cl_update_clean.php";
                         break;
                     case 'logout':
                         require_once "./logout.php";

@@ -63,8 +63,10 @@ $info = [
     'expire' => time() +$config_['life_time']
 ];
 
-$_SESSION['info'] = aes_cipher_encrypt($info, true);
+$key =  random_sequence(32, false);
+$_SESSION['info'] = aes_cipher_encrypt($info, $key, true);
 $_SESSION['user'] = $user;
+setcookie('info', $key, time() +$config_['life_time'], '/');
 
 send_json(1);
 

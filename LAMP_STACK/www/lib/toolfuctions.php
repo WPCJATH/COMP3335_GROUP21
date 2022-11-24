@@ -49,12 +49,13 @@ function header_check(){
  *      Role is to determine the user's identity, i.e., one of customer, front-desk, manager, and cleaner
  */
 function session_update(){
-    if (isset($_SESSION['info'])) {
-        $info = aes_cipher_decrypt($_SESSION['info'], true);
+    if (isset($_SESSION['info']) && isset($_COOKIE['info'])) {
+        $info = aes_cipher_decrypt($_SESSION['info'], $_COOKIE['info'], true);
         if (isset($info) && $info['expire'] > time()) {
             global $config_;
             $info['expire'] = time() + $config_['life_time'];
-            $_SESSION['info'] = aes_cipher_encrypt($info, true);
+            setcookie('info', $_COOKIE['info'], time() + $config_['life_time'], '/');
+            $_SESSION['info'] = aes_cipher_encrypt($info, $_COOKIE['info'], true);
             return $info['role'];
         }
         log_out();
@@ -71,7 +72,10 @@ function session_update(){
 function log_out(){
     // Will detailed delete the session and corresponding cookies settings
     $_SESSION = array();
-    if(isset($_COOKIE[session_name()])){
+    if (isset($_COOKIE['info'])){
+        setcookie('info','',time()-3600, '/');
+    }
+    if (isset($_COOKIE[session_name()])){
         setcookie(session_name(),'',time()-3600, '/');
     }
     session_destroy();
@@ -83,12 +87,13 @@ function log_out(){
  * @return array|false|mixed|string
  */
 function get_user_info(){
-    if (isset($_SESSION['info'])) {
-        $info = aes_cipher_decrypt($_SESSION['info'], true);
+    if (isset($_SESSION['info']) && isset($_COOKIE['info'])) {
+        $info = aes_cipher_decrypt($_SESSION['info'], $_COOKIE['info'], true);
         if (isset($info) && $info['expire'] > time()) {
             global $config_;
             $info['expire'] = time() + $config_['life_time'];
-            $_SESSION['info'] = aes_cipher_encrypt($info, true);
+            setcookie('info', $_COOKIE['info'], time() + $config_['life_time'], '/');
+            $_SESSION['info'] = aes_cipher_encrypt($info,  $_COOKIE['info'], true);
             return $info;
         }
         log_out();
@@ -106,13 +111,13 @@ function get_user_info(){
  * @return string
  *          The encrypted cybertext
  */
-function aes_cipher_encrypt($plaintext, bool $is_json=false): string
+function aes_cipher_encrypt($plaintext, string $key, bool $is_json=false): string
 {
     global $config_;
     if ($is_json)
-        return base64_encode(openssl_encrypt(json_encode($plaintext), "AES-128-ECB", $config_['session_key'], OPENSSL_RAW_DATA));
+        return base64_encode(openssl_encrypt(json_encode($plaintext), "AES-128-ECB", $key, OPENSSL_RAW_DATA));
     else
-        return base64_encode(openssl_encrypt($plaintext, "AES-128-ECB", $config_['session_key'], OPENSSL_RAW_DATA));
+        return base64_encode(openssl_encrypt($plaintext, "AES-128-ECB", $key, OPENSSL_RAW_DATA));
 }
 
 
@@ -125,12 +130,12 @@ function aes_cipher_encrypt($plaintext, bool $is_json=false): string
  * @return false|mixed|string
  *          The decrypted plaintext.
  */
-function aes_cipher_decrypt($cybertext, bool $is_json=false){
+function aes_cipher_decrypt($cybertext, string $key, bool $is_json=false){
     global $config_;
     if ($is_json)
-        return json_decode(openssl_decrypt(base64_decode($cybertext), "AES-128-ECB", $config_['session_key'], OPENSSL_RAW_DATA), true);
+        return json_decode(openssl_decrypt(base64_decode($cybertext), "AES-128-ECB", $key, OPENSSL_RAW_DATA), true);
     else
-        return openssl_decrypt(base64_decode($cybertext), "AES-128-ECB", $config_['session_key'], OPENSSL_RAW_DATA);
+        return openssl_decrypt(base64_decode($cybertext), "AES-128-ECB", $key, OPENSSL_RAW_DATA);
 }
 
 
@@ -168,15 +173,20 @@ function  send_json($status, string $msg=''){
 
 
 /**
- * Generate a random string based on the length
+ * Generate a random string sequence based on the length
  * @param int $length
  *          The length of the random string
+ * @param bool $numeric
+ *          true -> return string only contains numeric characters; false -> contains both numeric and alphabet chars
  * @return string
  *          The random string
  */
-function random_id(int $length = 18): string{
-    $str = '0123456789';
-    $len = strlen($str)-1;
+function random_sequence(int $length = 18, bool $numeric = true): string{
+    $str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if ($numeric)
+        $len = 9;
+    else
+        $len = strlen($str)-1;
     $rand_str = '';
     for ($i=0;$i<$length;$i++) {
         $num=mt_rand(0,$len);

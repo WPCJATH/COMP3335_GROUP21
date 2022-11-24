@@ -126,7 +126,7 @@ if (isset($data['cus_id'])){
 }
 
 while (true){
-    $entry_id = random_id();
+    $entry_id = random_sequence();
     $sql = "select `CUS_ID` from `CUSTOMER` where `CUS_ID`='".mysqli_real_escape_string($conn, $entry_id)."';";
     $result = mysqli_query($conn, $sql);
     if (!$result){
