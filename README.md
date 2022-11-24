@@ -1,9 +1,37 @@
 # COMP3335_GROUP21
 
+## Contents
+- [COMP3335\_GROUP21](#comp3335_group21)
+  - [Contents](#contents)
+  - [Introduction](#introduction)
+  - [Package Dependencies](#package-dependencies)
+    - [User-Activty Diagram](#user-activty-diagram)
+  - [Design Features](#design-features)
+    - [Router System- COMP3335\_GROUP21](#router-system--comp3335_group21)
+    - [Session and Cookies](#session-and-cookies)
+    - [HTTPS SSL/TLS](#https-ssltls)
+    - [Access Control](#access-control)
+      - [Entity-Relationship Diagram](#entity-relationship-diagram)
+      - [Privileges on different types of users](#privileges-on-different-types-of-users)
+    - [Partial Always-Encryption](#partial-always-encryption)
+    - [Montoring](#montoring)
+  - [Appearance](#appearance)
+    - [Unregister User](#unregister-user)
+    - [Customer](#customer)
+    - [Manager](#manager)
+    - [Front-Desk](#front-desk)
+    - [Cleaner](#cleaner)
+  - [DEMO Video](#demo-video)
+  - [File Structures](#file-structures)
+  - [How to run?](#how-to-run)
+    - [Deploy main components:](#deploy-main-components)
+    - [Deploy Monitor:](#deploy-monitor)
+  - [Future works](#future-works)
+
 ## Introduction
 This is a group project implenmentation of course COMP3335 Database Security at The HK PolyU 2022 Fall By Group21. A hotel information management system demo is developed on the [LAMP Stack](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) under [docker-compose](https://docs.docker.com/compose/). To ensure systematical security, serval technicals including cryptograph, https SSL/TLS connection, access-control, monitoring, etc. are utilized. 
 
-## Package Dependencies:
+## Package Dependencies
 - Frontend: [Bootstrap5](https://getbootstrap.com), [JQuery/Ajax](https://jquery.com), [qrcode.js](https://davidshimjs.github.io/qrcodejs/)
 - Backend: [php@7.4](https://www.php.net)
 - Server: [Apache](https://www.apache.org) / [Ngnix](https://www.nginx.com)
@@ -15,7 +43,8 @@ This is a group project implenmentation of course COMP3335 Database Security at 
 TBD
 
 ## Design Features
-### Router System
+### Router System- [COMP3335\_GROUP21](#comp3335_group21)
+
 TBD
 
 ### Session and Cookies
