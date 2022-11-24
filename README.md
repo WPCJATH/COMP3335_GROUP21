@@ -1,9 +1,34 @@
 # COMP3335_GROUP21
 
-## Entity-Relationship Diagram
+## Introduction
+This is a group project implenmentation of course COMP3335 Database Security at The HK PolyU 2022 Fall By Group21. A hotel information management system demo is developed on the [LAMP Stack](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) under [docker-compose](https://docs.docker.com/compose/). To ensure systematical security, serval technicals including cryptograph, https SSL/TLS connection, access-control, monitoring, etc. are utilized. 
+
+## Package Dependencies:
+- Frontend: [Bootstrap5](https://getbootstrap.com), [JQuery/Ajax](https://jquery.com), [qrcode.js](https://davidshimjs.github.io/qrcodejs/)
+- Backend: [php@7.4](https://www.php.net)
+- Server: [Apache](https://www.apache.org) / [Ngnix](https://www.nginx.com)
+- Database: [mysql@8.*](https://www.mysql.com)
+- Data-admin: [phpmyadmin](https://www.phpmyadmin.net)
+- Container: [docker](https://www.docker.com)/[docker-compose](https://docs.docker.com/compose/)
+
+### User-Activty Diagram
+TBD
+
+## Design Features
+### Router System
+TBD
+
+### Session and Cookies
+TBD
+
+### HTTPS SSL/TLS
+TBD
+
+### Access Control
+#### Entity-Relationship Diagram
 ![ERD](./images/ERD.png)
 
-## Privileges on different types of users
+#### Privileges on different types of users
 | User Type  | Room              | Reservation        | Customer             | Staff         | Room Type | Grant | Create User |
 |------------|-------------------|--------------------|----------------------|---------------|-----------|-------|-------------|
 | Front Desk | R                 | RU - row&col level | R - row&col level    | R - row level | R         | \     | \           |
@@ -13,13 +38,40 @@
 | Server     | \                 |                    |                      | \             | R         | Y     | Y           |
 | Unregister | \                 | \                  | \                    | \             | R         | \     | \           |
 
+### Partial Always-Encryption
+TBD
+
+### Montoring
+TBD
+
+
+
+## Appearance
+###  Unregister User
+TBD
+
+### Customer
+TBD
+
+### Manager
+TBD
+
+### Front-Desk
+TBD
+
+### Cleaner
+TBD
+
 
 ## DEMO Video
 [![Watch the video](./images/demo.png)](https://www.youtube-nocookie.com/embed/CWA3R_60B8s)
 
+## File Structures
+TBD
+
 ## How to run?
 
-**Deploy main components:**
+### Deploy main components:
 
 - Ensure your computer/server have installed [docker](https://www.docker.com) and [docker-compose](https://docs.docker.com/compose/)
 - `cd` to the directory `LAMP_STACK`
@@ -29,7 +81,12 @@
 
 - Run the file `start.sh`
 
-**Deploy Monitor:**
+**Then,**
+- Use url https://localhost:8000 or http://localhost:8080 to access the system
+- Use url https://localhost:8001 or http://localhost:8081 to access the phpmyadmin via account `root` and password `test`
+- Use host `localhost` and port `33306` to access the database via account `root` and password `test`, the used schema is `hotel`
+
+### Deploy Monitor:
 
 * Type `git clone -b main https://github.com/SigNoz/signoz.git && cd signoz/deploy/`
 * Type `./install.sh`
