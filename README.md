@@ -1,7 +1,7 @@
 # COMP3335_GROUP21
 
 ## Introduction
-This is a group project implenmentation of course COMP3335 Database Security at The HK PolyU 2022 Fall By Group21. A hotel information management system demo is developed on the [LAMP Stack](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) under [docker-compose](https://docs.docker.com/compose/). To ensure systematical system, serval techicals including cryptograph, https SSL/TLS connection, access-control, monitoring, etc. are utilized. 
+This is a group project implenmentation of course COMP3335 Database Security at The HK PolyU 2022 Fall By Group21. A hotel information management system demo is developed on the [LAMP Stack](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) under [docker-compose](https://docs.docker.com/compose/). To ensure systematical security, serval technicals including cryptograph, https SSL/TLS connection, access-control, monitoring, etc. are utilized. 
 
 ## Package Dependencies:
 - Frontend: [Bootstrap5](https://getbootstrap.com), [JQuery/Ajax](https://jquery.com), [qrcode.js](https://davidshimjs.github.io/qrcodejs/)
